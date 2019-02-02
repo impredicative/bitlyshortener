@@ -4,8 +4,9 @@
 There is intentionally no support for expanding a shortened URL or for other Bitly operations.
 
 ## Installation
-Using Python 3.7+:
-```pip install bitlyv4shortener```
+Using Python 3.7+, run:
+
+    pip install bitlyv4shortener
 
 ## Usage
 ```python
