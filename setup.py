@@ -14,7 +14,7 @@ def parse_requirements(filename: str) -> List[str]:
 
 
 setup(
-    name='bitlyv4shortener',
+    name='bitlyshortener',
     author='Ouroboros Chrysopoeia',
     author_email='impredicative@users.nomail.github.com',
     version='0.0.1',
@@ -22,7 +22,7 @@ setup(
     keywords='bitly url shortener',
     long_description=Path(__file__).with_name('README.md').read_text().strip(),
     long_description_content_type='text/markdown',
-    url='https://github.com/impredicative/bitly-v4-shortener/',
+    url='https://github.com/impredicative/bitlyshortener/',
     packages=find_packages(exclude=['scripts']),
     install_requires=parse_requirements('requirements/install.in'),
     python_requires='>=3.7',
