@@ -29,5 +29,7 @@ setup(
     classifiers=[  # https://pypi.org/classifiers/
         "Programming Language :: Python :: 3.7",
         "License :: OSI Approved :: GNU Affero General Public License v3",
+        "Topic :: Internet :: WWW/HTTP",
+        "Topic :: Software Development :: Libraries :: Python Modules",
     ],
 )
