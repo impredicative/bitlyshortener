@@ -1,1 +1,1 @@
-from bitlyv4shortener.shortener import Shortener
+from bitlyshortener.shortener import Shortener
