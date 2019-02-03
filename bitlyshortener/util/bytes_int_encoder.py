@@ -51,8 +51,14 @@ class TestBytesIntEncoder(unittest.TestCase):
                 self._test_encoding(b_in)
 
     def test_randomly_with_large_str(self):
-        for s_len in range(16):
-            for _ in range(2 ** s_len):
+        for s_len in range(256):
+            num_samples = {s_len <= 16: 2 ** s_len,
+                           16 < s_len <= 32: s_len ** 2,
+                           s_len > 32: s_len * 2,
+                           s_len > 64: s_len,
+                           s_len > 128: 2}[True]
+            # print(s_len, num_samples)
+            for _ in range(num_samples):
                 b_in = ''.join(random.choices(self.chars, k=s_len)).encode()
                 self._test_encoding(b_in)
 
