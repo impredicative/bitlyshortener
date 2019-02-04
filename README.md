@@ -20,8 +20,8 @@ To obtain an access token:
 ```python
 from bitlyshortener import Shortener
 
-oauth_tokens_pool = ['9fbe2864bb8872f5027c103321ff91be90aea687', '0cbe3864bc8872f5027c103321ff91be30aea787']
-shortener = Shortener(max_cache_len=8192, oauth_tokens=oauth_tokens_pool)
+tokens_pool = ['9fbe2864bb8872f5027c103321ff91be90aea687', '0cbe3864bc8872f5027c103321ff91be30aea787']
+shortener = Shortener(max_cache_len=8192, tokens=tokens_pool)
 urls = ['https://paperswithcode.com/latest', 'https://towardsdatascience.com/machine-learning/home',
         'https://research.fb.com/publications/']
 print(shortener.shorten(urls))
