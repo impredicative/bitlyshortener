@@ -59,16 +59,17 @@ class Shortener:
                 response = requests.post(url=endpoint, json={'long_url': long_url}, allow_redirects=False,
                                          headers={'Authorization': f'Bearer {token}'}, timeout=config.REQUEST_TIMEOUT)
                 response_json = response.json()
-                log.debug('Received %s having status code %s with short URL %s.',
-                          response_desc, response.status_code, response_json['link'])
+                short_url_desc = f'with link {response_json["link"]}' if ('link' in response_json) else 'with no link'
+                log.debug('Received %s having status code %s %s.',
+                          response_desc, response.status_code, short_url_desc)
                 response.raise_for_status()
                 break
             except (requests.HTTPError, requests.ConnectTimeout) as exception:
+                response_text = f' The response text is: {response.text}.' \
+                    if isinstance(exception, requests.HTTPError) else ''
                 log.warning('Error receiving %s. f this is due to token-specific rate limit, consider using more '
-                            'tokens, although an IP rate limit nevertheless applies. The exception is: %s: %s',
-                            response_desc, exception.__class__.__qualname__, exception)
-                if isinstance(exception, requests.HTTPError):
-                    log.info('Response text is: %s', response.text)
+                            'tokens, although an IP rate limit nevertheless applies.%s The exception is: %s: %s',
+                            response_desc, response_text, exception.__class__.__qualname__, exception)
                 if attempts:
                     continue
                 else:
