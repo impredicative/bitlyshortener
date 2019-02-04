@@ -23,7 +23,7 @@ class Shortener:
         self._long_url_to_int_id = lru_cache(maxsize=self._max_cache_size)(self._long_url_to_int_id)  # type: ignore  # Instance level cache
         self._test()
 
-    def _check_args(self):
+    def _check_args(self) -> None:
         tokens = self._tokens
         if not (tokens and isinstance(tokens, list) and all(isinstance(token, str) for token in tokens)):
             raise exc.ArgsError('Tokens must be a list of one or more strings.')  # Tokens must not be logged.
@@ -39,11 +39,7 @@ class Shortener:
         return short_url
 
     def _long_url_to_int_id(self, long_url: str) -> int:
-        """
-        :param url:
-        :return:
-        Can raise: requests.exceptions.HTTPError, requests.exceptions.ConnectTimeout
-        """
+        # Can raise: requests.HTTPError, requests.ConnectTimeout
         tokens = random.sample(self._tokens, len(self._tokens))
         endpoints = config.API_URL_BITLINKS, config.API_URL_SHORTEN  # Used in reverse order.
         attempts = [(endpoint, token) for endpoint in endpoints for token in tokens]
@@ -84,7 +80,7 @@ class Shortener:
         url_id = self._bytes_int_encoder.encode(url_id.encode())
         return url_id
 
-    def _test(self):
+    def _test(self) -> None:
         long_url = config.TEST_LONG_URL
         log.debug('Testing API for long URL %s.', long_url)
         short_url = self.shorten_url(long_url)
