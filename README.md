@@ -31,4 +31,4 @@ print(shortener.shorten(urls))
 To obtain the fastest response, URLs must not be shortened one at a time, but in a batch instead, as in the above
 example.
 
-Returned short links use the `j.mp` domain.
+Returned short links use the `j.mp` domain with HTTPS.
