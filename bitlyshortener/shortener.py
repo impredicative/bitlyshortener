@@ -63,9 +63,9 @@ class Shortener:
                           response_desc, response.status_code, short_url_desc)
                 response.raise_for_status()
                 break
-            except (requests.HTTPError, requests.ConnectTimeout) as exception:
+            except (requests.HTTPError, requests.ConnectionError, requests.ConnectTimeout) as exception:
                 exception_desc = f'The exception is: {exception.__class__.__qualname__}: {exception}'
-                if isinstance(exception, requests.ConnectTimeout):
+                if isinstance(exception, (requests.ConnectTimeout, requests.ConnectionError)):
                     log.warning('Error receiving %s. %s', response_desc, exception_desc)
                 elif isinstance(exception, requests.HTTPError):
                     log.warning('Error receiving %s. If this is due to token-specific rate limit, consider using more '
