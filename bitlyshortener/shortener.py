@@ -65,14 +65,17 @@ class Shortener:
                 response.raise_for_status()
                 break
             except (requests.HTTPError, requests.ConnectTimeout) as exception:
-                response_text = f' The response text is: {response.text}.' \
-                    if isinstance(exception, requests.HTTPError) else ''
-                log.warning('Error receiving %s. f this is due to token-specific rate limit, consider using more '
-                            'tokens, although an IP rate limit nevertheless applies.%s The exception is: %s: %s',
-                            response_desc, response_text, exception.__class__.__qualname__, exception)
-                if attempts:
-                    continue
-                else:
+                exception_desc = f'The exception is: {exception.__class__.__qualname__}: {exception}'
+                if isinstance(exception, requests.ConnectTimeout):
+                    log.warning('Error receiving %s. %s', response_desc, exception_desc)
+                elif isinstance(exception, requests.HTTPError):
+                    log.warning('Error receiving %s. If this is due to token-specific rate limit, consider using more '
+                                'tokens, although an IP rate limit nevertheless applies. The response status code is '
+                                '%s and text is %s. %s',
+                                response_desc, response.status_code, response.text, exception_desc)
+                    if response.status_code == 400:  # Bad request.
+                        raise
+                if not attempts:
                     log.error('Exhausted all %s attempts requesting response from %s for long URL %s.',
                               num_max_attempts, endpoint_desc, long_url)
                     raise
@@ -94,5 +97,7 @@ class Shortener:
         return short_url
 
     def shorten_urls(self, long_urls: List[str]) -> List[str]:  # TODO: Use concurrency.
+        log.debug('Retrieving %s short URLs.', len(long_urls))
         short_urls = [self.shorten_url(long_url) for long_url in long_urls]
+        log.info('Returning %s short URLs.', len(short_urls))
         return short_urls
