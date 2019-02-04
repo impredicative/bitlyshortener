@@ -18,7 +18,6 @@ RATE_LIMIT_PER_HOUR = 1000  # Ref: https://dev.bitly.com/v4/#section/Rate-Limiti
 RATE_LIMIT_PER_MONTH = 10000  # Ref: https://app.bitly.com/organization/1/detail (requires login) (for status 201)
 REQUEST_TIMEOUT = 2
 TEST_LONG_URL = 'https://python.org/'
-TEST_SHORT_URL = 'https://j.mp/2TtaqZC'
 
 LOGGING = {  # Ref: https://docs.python.org/3/howto/logging.html#configuring-logging
     'version': 1,
