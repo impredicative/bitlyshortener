@@ -32,20 +32,3 @@ To obtain the fastest response, URLs must not be shortened one at a time, but in
 example.
 
 Returned short links use the `j.mp` domain.
-
-## Developer resources
-These resources are for the development of this package, not for its users:
-* https://dev.bitly.com/
-* https://dev.bitly.com/v4_documentation.html
-* https://dev.bitly.com/v4/
-
-Rate limits:
-* https://dev.bitly.com/v4/#section/Rate-Limiting
-* https://dev.bitly.com/v4/#section/Authorization
-
-API:
-* https://dev.bitly.com/v4/#section/OAuth-2
-* https://dev.bitly.com/v4/#section/API-Endpoints
-* https://dev.bitly.com/v4/#operation/createFullBitlink
-* https://dev.bitly.com/v4/#operation/createBitlink
-
