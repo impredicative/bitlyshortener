@@ -21,7 +21,7 @@ To obtain an access token:
 from bitlyshortener import Shortener
 
 tokens_pool = ['9fbe2864bb8872f5027c103321ff91be90aea687', '0cbe3864bc8872f5027c103321ff91be30aea787']
-shortener = Shortener(max_cache_size=8192, tokens=tokens_pool)
+shortener = Shortener(tokens=tokens_pool, max_cache_size=8192)
 urls = ['https://paperswithcode.com/latest', 'https://towardsdatascience.com/machine-learning/home',
         'https://research.fb.com/publications/']
 print(shortener.shorten_urls(urls))
