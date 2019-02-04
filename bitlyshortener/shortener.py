@@ -58,12 +58,14 @@ class Shortener:
                 log.debug('Requesting %s.', response_desc)
                 response = requests.post(url=endpoint, json={'long_url': long_url}, allow_redirects=False,
                                          headers={'Authorization': f'Bearer {token}'}, timeout=config.REQUEST_TIMEOUT)
-                log.debug('Received %s having status code %s.', response_desc, response.status_code)
+                response_json = response.json()
+                log.debug('Received %s having status code %s with short URL %s.',
+                          response_desc, response.status_code, response_json['link'])
                 response.raise_for_status()
                 break
             except (requests.HTTPError, requests.ConnectTimeout) as exception:
-                log.warning('Error receiving %s. f this is due to insufficient tokens, consider using more tokens, '
-                            'although an IP rate limit nevertheless applies. The exception is: %s: %s',
+                log.warning('Error receiving %s. f this is due to token-specific rate limit, consider using more '
+                            'tokens, although an IP rate limit nevertheless applies. The exception is: %s: %s',
                             response_desc, exception.__class__.__qualname__, exception)
                 if isinstance(exception, requests.HTTPError):
                     log.info('Response text is: %s', response.text)
@@ -74,7 +76,7 @@ class Shortener:
                               num_max_attempts, endpoint_desc, long_url)
                     raise
         assert response.status_code in (200, 201)  # Investigational.
-        url_id = response.json()['link'].rpartition('/')[-1]
+        url_id = response_json['link'].rpartition('/')[-1]
         url_id = self._bytes_int_encoder.encode(url_id.encode())
         return url_id
 
@@ -87,6 +89,7 @@ class Shortener:
     def shorten_url(self, long_url: str) -> str:
         url_id = self._long_url_to_int_id(long_url)
         short_url = self._int_id_to_short_url(url_id)
+        log.debug('Returning short URL %s for long URL %s.', short_url, long_url)
         return short_url
 
     def shorten_urls(self, long_urls: List[str]) -> List[str]:  # TODO: Use concurrency.
