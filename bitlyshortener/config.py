@@ -17,6 +17,7 @@ PACKAGE_NAME = Path(__file__).parent.stem
 # RATE_LIMIT_PER_HOUR = 1000  # Ref: https://dev.bitly.com/v4/#section/Rate-Limiting (for status 201 or 200)
 # RATE_LIMIT_PER_MONTH = 10000  # Ref: https://app.bitly.com/organization/1/detail (requires login) (for status 201)
 REQUEST_TIMEOUT = 2
+TEST_API_ON_INIT = False
 TEST_LONG_URL = 'https://python.org/'
 
 LOGGING = {  # Ref: https://docs.python.org/3/howto/logging.html#configuring-logging

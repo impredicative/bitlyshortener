@@ -21,7 +21,9 @@ class Shortener:
 
         self._bytes_int_encoder = BytesIntEncoder()
         self._long_url_to_int_id = lru_cache(maxsize=self._max_cache_size)(self._long_url_to_int_id)  # type: ignore  # Instance level cache
-        self._test()
+        self._session = requests.Session()
+        if config.TEST_API_ON_INIT:
+            self._test()
 
     def _check_args(self) -> None:
         tokens = self._tokens
@@ -52,8 +54,9 @@ class Shortener:
                             f'{token[:4]} for long URL {long_url} in attempt {num_attempt} of {num_max_attempts}'
             try:
                 log.debug('Requesting %s.', response_desc)
-                response = requests.post(url=endpoint, json={'long_url': long_url}, allow_redirects=False,
-                                         headers={'Authorization': f'Bearer {token}'}, timeout=config.REQUEST_TIMEOUT)
+                response = self._session.post(url=endpoint, json={'long_url': long_url}, allow_redirects=False,
+                                              headers={'Authorization': f'Bearer {token}'},
+                                              timeout=config.REQUEST_TIMEOUT)
                 response_json = response.json()
                 short_url_desc = f'with link {response_json["link"]}' if ('link' in response_json) else 'with no link'
                 log.debug('Received %s having status code %s %s.',
