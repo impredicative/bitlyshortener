@@ -6,17 +6,17 @@ As a disclaimer, this is an unofficial package and it has no association with Bi
 
 Expanding a shortened URL and other Bitly operations are outside the scope of this package.
 
-## Installation
-Using Python 3.7+, run:
-
-    pip install bitlyshortener
-
 ## Usage
 To obtain an access token:
 * Create and log in to a Bitly account.
 * In the account profile, navigate to Generic Access Token.
 * Enter password and click Generate Token.
 
+To install the package, using Python 3.7+, run:
+
+    pip install bitlyshortener
+
+Usage examples:
 ```python
 from bitlyshortener import Shortener
 
