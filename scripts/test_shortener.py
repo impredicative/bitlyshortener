@@ -2,7 +2,9 @@ import os
 import random
 import time
 
-from bitlyshortener import Shortener
+from bitlyshortener import config, Shortener
+
+config.configure_logging()
 
 tokens = os.getenv('BITLY_TOKENS').strip().split(',')
 

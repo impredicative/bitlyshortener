@@ -11,8 +11,6 @@ from .util import BytesIntEncoder
 
 import requests
 
-config.configure_logging()
-
 log = logging.getLogger(__name__)
 
 
