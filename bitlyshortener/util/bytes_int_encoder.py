@@ -35,7 +35,7 @@ class TestBytesIntEncoder(unittest.TestCase):
     chars = string.ascii_letters + string.digits
     encoder = BytesIntEncoder(chars.encode())
 
-    def _test_encoding(self, b_in: bytes):
+    def _test_encoding(self, b_in: bytes) -> None:
         i = self.encoder.encode(b_in)
         self.assertIsInstance(i, int)
         b_out = self.encoder.decode(i)
@@ -46,8 +46,8 @@ class TestBytesIntEncoder(unittest.TestCase):
     def test_thoroughly_with_small_str(self):
         for s_len in range(4):
             for s in itertools.combinations_with_replacement(self.chars, s_len):
-                s = ''.join(s)
-                b_in = s.encode()
+                s = ''.join(s)  # type: ignore
+                b_in = s.encode()  # type: ignore
                 self._test_encoding(b_in)
 
     def test_randomly_with_large_str(self):
