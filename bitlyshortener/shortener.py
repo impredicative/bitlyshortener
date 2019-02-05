@@ -44,11 +44,11 @@ class Shortener:
                                 f'{max_cache_size}.')
 
     def _int_id_to_short_url(self, url_id: int) -> str:
-        url_id = self._bytes_int_encoder.decode(url_id).decode()
-        short_url = f'https://j.mp/{url_id}'
+        url_id_ = self._bytes_int_encoder.decode(url_id).decode()
+        short_url = f'https://j.mp/{url_id_}'
         return short_url
 
-    def _long_url_to_int_id(self, long_url: str) -> int:
+    def _long_url_to_int_id(self, long_url: str) -> int:  # type: ignore
         # Can raise: requests.HTTPError, requests.ConnectTimeout
         tokens = random.sample(self._tokens, len(self._tokens))
         endpoints = config.API_URL_BITLINKS, config.API_URL_SHORTEN  # Used in reverse order.
@@ -71,9 +71,9 @@ class Shortener:
                           response_desc, response.status_code, short_url_desc)
                 response.raise_for_status()
                 break
-            except (requests.HTTPError, requests.ConnectionError, requests.ConnectTimeout) as exception:
+            except (requests.HTTPError, requests.ConnectionError, requests.ConnectTimeout) as exception:  # type: ignore
                 exception_desc = f'The exception is: {exception.__class__.__qualname__}: {exception}'
-                if isinstance(exception, (requests.ConnectTimeout, requests.ConnectionError)):
+                if isinstance(exception, (requests.ConnectTimeout, requests.ConnectionError)):  # type: ignore
                     log.warning('Error receiving %s. %s', response_desc, exception_desc)
                 elif isinstance(exception, requests.HTTPError):
                     log.warning('Error receiving %s. If this is due to token-specific rate limit, consider using more '
