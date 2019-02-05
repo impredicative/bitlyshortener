@@ -31,7 +31,7 @@ shortener.shorten_urls(urls)
 
 To obtain the fastest response, URLs must be shortened in a batch as in the example above.
 A thread pool of up to 32 concurrent requesters is used, but no more than up to five per randomized token.
-For example, if two tokens are supplied, up to ten concurrent workers are used.
-If eight tokens are supplied, then not 40 but a max of 32 concurrent workers are used.
+For example, if two tokens are supplied, up to 2 * 5 = 10 concurrent workers are used.
+If eight tokens are supplied, then not 8 * 5 = 40, but a max of 32 concurrent workers are used.
 
 Returned short links use the `j.mp` domain with HTTPS.
