@@ -1,6 +1,8 @@
+import concurrent.futures
 from functools import lru_cache
 import logging
 import random
+import threading
 from typing import List
 
 from . import config, exc
@@ -21,7 +23,7 @@ class Shortener:
 
         self._bytes_int_encoder = BytesIntEncoder()
         self._long_url_to_int_id = lru_cache(maxsize=self._max_cache_size)(self._long_url_to_int_id)  # type: ignore  # Instance level cache
-        self._session = requests.Session()
+        self._init_executor()
         if config.TEST_API_ON_INIT:
             self._test()
 
@@ -39,9 +41,23 @@ class Shortener:
             raise exc.ArgsError('Tokens must be a list of one or more strings.')  # Tokens must not be logged.
 
         max_cache_size = self._max_cache_size
-        if not isinstance(max_cache_size, int) or (max_cache_size < config.MIN_CACHE_SIZE):
+        if (not isinstance(max_cache_size, int)) or (max_cache_size < config.MIN_CACHE_SIZE):
             raise exc.ArgsError(f'Max cache size must be an integer ≥{config.MIN_CACHE_SIZE}, but it is '
                                 f'{max_cache_size}.')
+
+    def _init_requests_session(self) -> None:
+        log.debug('Initializing requests session for thread.')
+        self._thread_local.session = requests.Session()
+        log.debug('Initialized requests session for thread.')
+
+    def _init_executor(self) -> None:
+        self._max_workers = min(config.MAX_WORKERS, len(self._tokens) * config.MAX_WORKERS_PER_TOKEN)
+        log.debug('Max number of worker threads is %s.', self._max_workers)
+        self._thread_local = threading.local()
+        self._executor = concurrent.futures.ThreadPoolExecutor(max_workers=self._max_workers,
+                                                               # thread_name_prefix='Requester',
+                                                               initializer=self._init_requests_session)
+        log.debug('Initialized thread pool executor.')
 
     def _int_id_to_short_url(self, url_id: int) -> str:
         url_id_ = self._bytes_int_encoder.decode(url_id).decode()
@@ -62,9 +78,9 @@ class Shortener:
                             f'{token[:4]} for long URL {long_url} in attempt {num_attempt} of {num_max_attempts}'
             try:
                 log.debug('Requesting %s.', response_desc)
-                response = self._session.post(url=endpoint, json={'long_url': long_url}, allow_redirects=False,
-                                              headers={'Authorization': f'Bearer {token}'},
-                                              timeout=config.REQUEST_TIMEOUT)
+                response = self._thread_local.session.post(url=endpoint, json={'long_url': long_url},
+                                                           allow_redirects=False, timeout=config.REQUEST_TIMEOUT,
+                                                           headers={'Authorization': f'Bearer {token}'})
                 response_json = response.json()
                 short_url_desc = f'with link {response_json["link"]}' if ('link' in response_json) else 'with no link'
                 log.debug('Received %s having status code %s %s.',
@@ -91,20 +107,24 @@ class Shortener:
         url_id = self._bytes_int_encoder.encode(url_id.encode())
         return url_id
 
-    def _test(self) -> None:
-        long_url = config.TEST_LONG_URL
-        log.debug('Testing API for long URL %s.', long_url)
-        short_url = self.shorten_url(long_url)
-        log.debug('Tested API for long URL %s. Received short URL %s.', long_url, short_url)
-
-    def shorten_url(self, long_url: str) -> str:
+    def _shorten_url(self, long_url: str) -> str:
         url_id = self._long_url_to_int_id(long_url)
         short_url = self._int_id_to_short_url(url_id)
         log.debug('Returning short URL %s for long URL %s. %s', short_url, long_url, self._cache_state())
         return short_url
 
+    def _test(self) -> None:
+        long_url = config.TEST_LONG_URL
+        log.debug('Testing API for long URL %s.', long_url)
+        short_url = self.shorten_urls([long_url])
+        log.debug('Tested API for long URL %s. Received short URL %s.', long_url, short_url)
+
     def shorten_urls(self, long_urls: List[str]) -> List[str]:  # TODO: Use concurrency.
-        log.debug('Retrieving %s short URLs.', len(long_urls))
-        short_urls = [self.shorten_url(long_url) for long_url in long_urls]
-        log.info('Returning %s short URLs.', len(short_urls))
+        num_long_urls = len(long_urls)
+        log.debug('Concurrently retrieving %s short URLs using up to %s worker threads.', num_long_urls,
+                  min(num_long_urls, self._max_workers))
+        short_urls = list(self._executor.map(self._shorten_url, long_urls))
+        num_short_urls = len(short_urls)
+        assert num_long_urls == num_short_urls
+        log.info('Concurrently retrieved %s short URLs.', num_short_urls)
         return short_urls
