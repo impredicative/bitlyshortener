@@ -37,8 +37,9 @@ class Shortener:
 
     def _check_args(self) -> None:
         tokens = self._tokens
-        if not (tokens and isinstance(tokens, list) and all(isinstance(token, str) for token in tokens)):
-            raise exc.ArgsError('Tokens must be a list of one or more strings.')  # Tokens must not be logged.
+        if not (tokens and isinstance(tokens, list) and all(isinstance(token, str) for token in tokens) and
+                (len(tokens) == len(set(tokens)))):
+            raise exc.ArgsError('Tokens must be a list of one or more unique strings.')  # Tokens must not be logged.
 
         max_cache_size = self._max_cache_size
         if (not isinstance(max_cache_size, int)) or (max_cache_size < config.MIN_CACHE_SIZE):
