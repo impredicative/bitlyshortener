@@ -40,10 +40,9 @@ from bitlyshortener import Shortener
 tokens_pool = ['9fbe2864bb8872f5027c103321ff91be90aea687', '0cbe3864bc8872f5027c103321ff91be30aea787']
 shortener = Shortener(tokens=tokens_pool, max_cache_size=8192)
 
-urls = ['https://paperswithcode.com/latest', 'https://towardsdatascience.com/machine-learning/home',
-        'https://research.fb.com/publications/']
+urls = ['https://paperswithcode.com/sota', 'https://arxiv.org/', 'https://arxiv.org/list/cs.LG/recent']
 shortener.shorten_urls(urls)
-['https://j.mp/2GhpsxU', 'https://j.mp/2RzN02I', 'https://j.mp/2Gj5TFq']
+['https://j.mp/2TuIwfz', 'https://j.mp/2t8R7cu', 'https://j.mp/2GohbIt']
 ```
 
 To obtain the fastest response, URLs must be shortened in a batch as in the example above.
