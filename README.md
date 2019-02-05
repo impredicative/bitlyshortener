@@ -8,9 +8,14 @@ Expanding a shortened URL and other Bitly operations are outside the scope of th
 
 ## Usage
 To obtain an access token:
-* Create and log in to a Bitly account.
+* Sign up for a new Bitly account.
+Note for the record that Bitly blocks the use of most commonly available disposable email addresses.
+An email address such as `YourGmailUsername+RandomID@gmail.com` should work, however.
+* Verify the email address by clicking the link in the confirmation email.
+* Log in to the Bitly account.
 * In the account profile, navigate to Generic Access Token.
 * Enter password and click Generate Token.
+* Repeat the process to obtain five or more tokens. Recall that an IP rate limit nevertheless applies.
 
 To install the package, using Python 3.7+, run:
 
