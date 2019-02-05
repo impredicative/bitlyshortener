@@ -30,9 +30,9 @@ class Shortener:
     def _cache_state(self) -> str:
         cache_info = self._long_url_to_int_id.cache_info()
         hit_rate = (100 * cache_info.hits) / (cache_info.hits + cache_info.misses)
-        use_rate = cache_info.currsize / cache_info.maxsize
+        size_rate = cache_info.currsize / cache_info.maxsize
         cache_state = f'Cache state is: hits={cache_info.hits}, currsize={cache_info.currsize}, ' \
-                      f'hit_rate={hit_rate:.0f}%, use_rate={use_rate:.0f}%'
+                      f'hit_rate={hit_rate:.0f}%, size_rate={size_rate:.0f}%'
         return cache_state
 
     def _check_args(self) -> None:
@@ -46,7 +46,6 @@ class Shortener:
                                 f'{max_cache_size}.')
 
     def _init_requests_session(self) -> None:
-        log.debug('Initializing requests session for thread.')
         self._thread_local.session = requests.Session()
         log.debug('Initialized requests session for thread.')
 
@@ -55,7 +54,7 @@ class Shortener:
         log.debug('Max number of worker threads is %s.', self._max_workers)
         self._thread_local = threading.local()
         self._executor = concurrent.futures.ThreadPoolExecutor(max_workers=self._max_workers,
-                                                               # thread_name_prefix='Requester',
+                                                               thread_name_prefix='Requester',
                                                                initializer=self._init_requests_session)
         log.debug('Initialized thread pool executor.')
 
@@ -110,7 +109,7 @@ class Shortener:
     def _shorten_url(self, long_url: str) -> str:
         url_id = self._long_url_to_int_id(long_url)
         short_url = self._int_id_to_short_url(url_id)
-        log.debug('Returning short URL %s for long URL %s. %s', short_url, long_url, self._cache_state())
+        log.debug('Returning short URL %s for long URL %s.', short_url, long_url)
         return short_url
 
     def _test(self) -> None:
@@ -126,5 +125,5 @@ class Shortener:
         short_urls = list(self._executor.map(self._shorten_url, long_urls))
         num_short_urls = len(short_urls)
         assert num_long_urls == num_short_urls
-        log.info('Concurrently retrieved %s short URLs.', num_short_urls)
+        log.info('Concurrently retrieved %s short URLs. %s', num_short_urls, self._cache_state())
         return short_urls
