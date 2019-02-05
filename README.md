@@ -1,5 +1,5 @@
 # bitlyshortener
-**bitlyshortener** is a Python 3.7 based high-volume caching-enabled Bitly V4 URL shortener.
+**bitlyshortener** is an experimental Python 3.7 based high-volume memory-caching-enabled Bitly V4 URL shortener.
 It requires and uses one or more generic access tokens provided by Bitly which it uses semi-randomly.
 It is nevertheless limited by per-IP rate limits.
 As a disclaimer, this is an unofficial package and it has no association with Bitly.
@@ -30,5 +30,6 @@ shortener.shorten_urls(urls)
 ```
 
 To obtain the fastest response, URLs must be shortened in a batch as in the example above.
+A thread pool of up to 32 concurrent requesters is used, but no more than up to five per randomized token.
 
 Returned short links use the `j.mp` domain with HTTPS.
