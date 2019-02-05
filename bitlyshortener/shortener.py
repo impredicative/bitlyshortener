@@ -2,6 +2,7 @@ import concurrent.futures
 from functools import lru_cache
 import logging
 import random
+import time
 import threading
 from typing import List
 
@@ -87,13 +88,15 @@ class Shortener:
                             f'{token[:4]} for long URL {long_url} in attempt {num_attempt} of {num_max_attempts}'
             try:
                 log.debug('Requesting %s.', response_desc)
+                start_time = time.monotonic()
                 response = self._thread_local.session.post(url=endpoint, json={'long_url': long_url},
                                                            allow_redirects=False, timeout=config.REQUEST_TIMEOUT,
                                                            headers={'Authorization': f'Bearer {token}'})
+                time_used = time.monotonic() - start_time
                 response_json = response.json()
                 short_url_desc = f'with link {response_json["link"]}' if ('link' in response_json) else 'with no link'
-                log.debug('Received %s having status code %s %s.',
-                          response_desc, response.status_code, short_url_desc)
+                log.debug('Received %s having status code %s %s in %.1fs.',
+                          response_desc, response.status_code, short_url_desc, time_used)
                 response.raise_for_status()
                 break
             except (requests.HTTPError, requests.ConnectionError, requests.ConnectTimeout) as exception:  # type: ignore
