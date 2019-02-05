@@ -12,7 +12,7 @@ The following are the known rate limits per token:
 * Per month: 10000 (presumably for status 201 only) [[ref] (requires login)](https://app.bitly.com/organization/1/detail)
 
 ## Usage
-To obtain an access token:
+This package doesn't include any access token. To obtain one:
 * Sign up for a new Bitly account.
 An email address such as `YourGmailUsername+RandomSuffix@gmail.com` should work.
 * Verify the email address by clicking the link in the confirmation email.
