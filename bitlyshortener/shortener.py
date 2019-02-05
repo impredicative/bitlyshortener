@@ -143,7 +143,7 @@ class Shortener:
         else:
             strategy_desc = 'Serially'
             resource_desc = ''
-            mapper = map
+            mapper = map  # type: ignore
         log.debug('%s retrieving %s short URLs%s.', strategy_desc, num_long_urls, resource_desc)
         start_time = time.monotonic()
         short_urls = list(mapper(self._shorten_url, long_urls))
