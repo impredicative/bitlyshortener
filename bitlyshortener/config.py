@@ -10,7 +10,7 @@ def configure_logging() -> None:
 
 API_URL_BITLINKS = 'https://api-ssl.bitly.com/v4/bitlinks'  # Ref: https://dev.bitly.com/v4/#operation/createFullBitlink
 API_URL_SHORTEN = 'https://api-ssl.bitly.com/v4/shorten'  # Ref: https://dev.bitly.com/v4/#operation/createBitlink
-MAX_WORKERS = 16
+MAX_WORKERS = 32
 MAX_WORKERS_PER_TOKEN = 5  # Ref: https://dev.bitly.com/v4/#section/Rate-Limiting
 MIN_CACHE_SIZE = 1024
 PACKAGE_NAME = Path(__file__).parent.stem
