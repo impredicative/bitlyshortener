@@ -150,6 +150,7 @@ class Shortener:
         time_used = time.monotonic() - start_time
         num_short_urls = len(short_urls)
         assert num_long_urls == num_short_urls
-        log.info('%s retrieved %s short URLs in %.1fs. %s', strategy_desc, num_short_urls, time_used,
-                 self._cache_state())
+        urls_per_second = num_short_urls / time_used
+        log.info('%s retrieved %s short URLs in %.1fs at a rate of %.0f/s. %s', strategy_desc, num_short_urls,
+                 time_used, urls_per_second, self._cache_state())
         return short_urls
