@@ -29,10 +29,10 @@ class Shortener:
 
     def _cache_state(self) -> str:
         cache_info = self._long_url_to_int_id.cache_info()
-        hit_rate = (100 * cache_info.hits) / (cache_info.hits + cache_info.misses)
-        size_rate = cache_info.currsize / cache_info.maxsize
+        hit_percentage = (100 * cache_info.hits) / (cache_info.hits + cache_info.misses)
+        size_percentage = (100 * cache_info.currsize) / cache_info.maxsize
         cache_state = f'Cache state is: hits={cache_info.hits}, currsize={cache_info.currsize}, ' \
-                      f'hit_rate={hit_rate:.0f}%, size_rate={size_rate:.0f}%'
+                      f'hit_rate={hit_percentage:.0f}%, size_rate={size_percentage:.0f}%'
         return cache_state
 
     def _check_args(self) -> None:
