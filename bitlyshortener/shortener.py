@@ -52,7 +52,7 @@ class Shortener:
 
     def _init_requests_session(self) -> None:
         self._thread_local.session = requests.Session()
-        log.debug('Initialized requests session having object ID %x for thread.', id(self._thread_local.session))
+        log.debug('Initialized requests session having object ID %x.', id(self._thread_local.session))
 
     def _init_executor(self) -> None:
         self._max_workers = min(config.MAX_WORKERS, len(self._tokens) * config.MAX_WORKERS_PER_TOKEN)
@@ -145,8 +145,11 @@ class Shortener:
             resource_desc = ''
             mapper = map
         log.debug('%s retrieving %s short URLs%s.', strategy_desc, num_long_urls, resource_desc)
+        start_time = time.monotonic()
         short_urls = list(mapper(self._shorten_url, long_urls))
+        time_used = time.monotonic() - start_time
         num_short_urls = len(short_urls)
         assert num_long_urls == num_short_urls
-        log.info('%s retrieved %s short URLs. %s', strategy_desc, num_short_urls, self._cache_state())
+        log.info('%s retrieved %s short URLs in %.1fs. %s', strategy_desc, num_short_urls, time_used,
+                 self._cache_state())
         return short_urls
