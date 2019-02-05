@@ -1,5 +1,5 @@
 # bitlyshortener
-**bitlyshortener** is an experimental Python 3.7 based high-volume memory-caching-enabled Bitly V4 URL shortener.
+**bitlyshortener** is an experimental Python 3.7 based high-volume Bitly V4 URL shortener with a memory-cache.
 It requires and uses one or more generic access tokens provided by Bitly which it uses semi-randomly.
 It is nevertheless limited by per-IP rate limits.
 As a disclaimer, this is an unofficial package and it has no association with Bitly.
