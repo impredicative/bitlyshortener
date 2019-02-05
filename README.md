@@ -14,14 +14,11 @@ The following are the known rate limits per token:
 ## Usage
 To obtain an access token:
 * Sign up for a new Bitly account.
-Note for the record that Bitly blocks the use of most commonly available disposable email addresses.
-An email address such as `YourGmailUsername+RandomID@gmail.com` should work, however.
+An email address such as `YourGmailUsername+RandomSuffix@gmail.com` should work.
 * Verify the email address by clicking the link in the confirmation email.
 * Log in to the Bitly account.
 * In the account profile, navigate to Generic Access Token.
 * Enter password and click Generate Token.
-* Repeat the process to obtain five or more tokens per your requirements.
-Recall that an IP rate limit nevertheless applies.
 
 To install the package, using Python 3.7+, run:
 
@@ -44,5 +41,6 @@ To obtain the fastest response, URLs must be shortened in a batch as in the exam
 A thread pool of up to 32 concurrent requesters is used, but no more than up to five per randomized token.
 For example, if two tokens are supplied, up to 2 * 5 = 10 concurrent workers are used.
 If eight tokens are supplied, then not 8 * 5 = 40, but a max of 32 concurrent workers are used.
+The max limit can, if really necessary, be increased by setting `config.MAX_WORKERS` before initializing the shortener.
 
 Returned short links use the `j.mp` domain with HTTPS.
