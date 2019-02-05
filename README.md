@@ -20,7 +20,12 @@ It can sometimes be necessary to have the confirmation email resent.
 * In the account profile, navigate to Generic Access Token.
 * Enter password and click Generate Token.
 
-To install the package, using Python 3.7+, run:
+Python 3.7+ is required.
+Any older version of Python will not work due to the use of 
+[`ThreadPoolExecutor`](https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor)
+with an *initializer*.
+
+To install the package, run:
 
     pip install bitlyshortener
 
