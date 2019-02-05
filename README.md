@@ -16,7 +16,6 @@ To obtain an access token:
 * Sign up for a new Bitly account.
 An email address such as `YourGmailUsername+RandomSuffix@gmail.com` should work.
 * Verify the email address by clicking the link in the confirmation email.
-* Log in to the Bitly account.
 * In the account profile, navigate to Generic Access Token.
 * Enter password and click Generate Token.
 
