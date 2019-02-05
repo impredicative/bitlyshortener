@@ -25,6 +25,14 @@ class Shortener:
         if config.TEST_API_ON_INIT:
             self._test()
 
+    def _cache_state(self) -> str:
+        cache_info = self._long_url_to_int_id.cache_info()
+        hit_rate = (100 * cache_info.hits) / (cache_info.hits + cache_info.misses)
+        use_rate = cache_info.currsize / cache_info.maxsize
+        cache_state = f'Cache state is: hits={cache_info.hits}, currsize={cache_info.currsize}, ' \
+                      f'hit_rate={hit_rate:.0f}%, use_rate={use_rate:.0f}%'
+        return cache_state
+
     def _check_args(self) -> None:
         tokens = self._tokens
         if not (tokens and isinstance(tokens, list) and all(isinstance(token, str) for token in tokens)):
@@ -92,7 +100,7 @@ class Shortener:
     def shorten_url(self, long_url: str) -> str:
         url_id = self._long_url_to_int_id(long_url)
         short_url = self._int_id_to_short_url(url_id)
-        log.debug('Returning short URL %s for long URL %s.', short_url, long_url)
+        log.debug('Returning short URL %s for long URL %s. %s', short_url, long_url, self._cache_state())
         return short_url
 
     def shorten_urls(self, long_urls: List[str]) -> List[str]:  # TODO: Use concurrency.
