@@ -130,9 +130,16 @@ class Shortener:
 
     def shorten_urls(self, long_urls: List[str]) -> List[str]:
         num_long_urls = len(long_urls)
-        strategy_desc, mapper = ('Concurrently', self._executor.map) if len(set(long_urls)) > 1 else ('Serially', map)
-        log.debug('%s retrieving %s short URLs using up to %s worker threads.', strategy_desc, num_long_urls,
-                  min(num_long_urls, self._max_workers))
+        if len(set(long_urls)) > 1:
+            strategy_desc = 'Concurrently'
+            num_workers = min(num_long_urls, self._max_workers)
+            resource_desc = f' using up to {num_workers} worker threads'
+            mapper = self._executor.map
+        else:
+            strategy_desc = 'Serially'
+            resource_desc = ''
+            mapper = map
+        log.debug('%s retrieving %s short URLs%s.', strategy_desc, num_long_urls, resource_desc)
         short_urls = list(mapper(self._shorten_url, long_urls))
         num_short_urls = len(short_urls)
         assert num_long_urls == num_short_urls
