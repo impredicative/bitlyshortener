@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 
 class Shortener:
     def __init__(self, *, tokens: List[str], max_cache_size: int = config.MIN_CACHE_SIZE):
-        self._tokens = tokens
+        self._tokens = sorted(set(tokens))  # Sorted for subsequent reproducible randomization.
         self._max_cache_size = max_cache_size
         self._check_args()
 
@@ -54,6 +54,7 @@ class Shortener:
         self._max_workers = min(config.MAX_WORKERS, len(self._tokens) * config.MAX_WORKERS_PER_TOKEN)
         log.debug('Max number of worker threads is %s.', self._max_workers)
         self._thread_local = threading.local()
+        self._init_requests_session()  # For conditional non-parallel execution.
         self._executor = concurrent.futures.ThreadPoolExecutor(max_workers=self._max_workers,
                                                                thread_name_prefix='Requester',
                                                                initializer=self._init_requests_session)
@@ -65,9 +66,16 @@ class Shortener:
         return short_url
 
     def _long_url_to_int_id(self, long_url: str) -> int:  # type: ignore
-        # Can raise: requests.HTTPError, requests.ConnectTimeout
-        tokens = random.sample(self._tokens, len(self._tokens))
-        endpoints = config.API_URL_BITLINKS, config.API_URL_SHORTEN  # Used in reverse order.
+        # Can raise: requests.HTTPError, requests.ConnectionError, requests.ConnectTimeout
+        long_url = long_url.strip()
+        if len(self._tokens) > 1:
+            randomizer = random.Random(long_url)  # For reproducible randomization.
+            # Reproducibility of randomization is useful so as to prevent creating the same short URL under multiple
+            # tokens, as this counts toward a monthly creation quota.
+            tokens = randomizer.sample(self._tokens, len(self._tokens))
+        else:
+            tokens = self._tokens
+        endpoints = config.API_URL_BITLINKS, config.API_URL_SHORTEN  # Specified in reverse order due to pop().
         attempts = [(endpoint, token) for endpoint in endpoints for token in tokens]
         num_max_attempts = len(attempts)
         while attempts:
@@ -119,12 +127,13 @@ class Shortener:
         short_url = self.shorten_urls([long_url])
         log.debug('Tested API for long URL %s. Received short URL %s.', long_url, short_url)
 
-    def shorten_urls(self, long_urls: List[str]) -> List[str]:  # TODO: Use concurrency.
+    def shorten_urls(self, long_urls: List[str]) -> List[str]:
         num_long_urls = len(long_urls)
-        log.debug('Concurrently retrieving %s short URLs using up to %s worker threads.', num_long_urls,
+        strategy_desc, mapper = ('Concurrently', self._executor.map) if len(set(long_urls)) > 1 else ('Serially', map)
+        log.debug('%s retrieving %s short URLs using up to %s worker threads.', strategy_desc, num_long_urls,
                   min(num_long_urls, self._max_workers))
-        short_urls = list(self._executor.map(self._shorten_url, long_urls))
+        short_urls = list(mapper(self._shorten_url, long_urls))
         num_short_urls = len(short_urls)
         assert num_long_urls == num_short_urls
-        log.info('Concurrently retrieved %s short URLs. %s', num_short_urls, self._cache_state())
+        log.info('%s retrieved %s short URLs. %s', strategy_desc, num_short_urls, self._cache_state())
         return short_urls
