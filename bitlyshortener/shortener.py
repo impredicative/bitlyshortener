@@ -42,11 +42,13 @@ class Shortener:
         if not (tokens and isinstance(tokens, list) and all(isinstance(token, str) for token in tokens) and
                 (len(tokens) == len(set(tokens)))):
             raise exc.ArgsError('Tokens must be a list of one or more unique strings.')  # Tokens must not be logged.
+        log.debug('%s unique tokens are available.', len(tokens))
 
         max_cache_size = self._max_cache_size
         if (not isinstance(max_cache_size, int)) or (max_cache_size < config.MIN_CACHE_SIZE):
             raise exc.ArgsError(f'Max cache size must be an integer ≥{config.MIN_CACHE_SIZE}, but it is '
                                 f'{max_cache_size}.')
+        log.debug('Max cache size is %s.', max_cache_size)
 
     def _init_requests_session(self) -> None:
         self._thread_local.session = requests.Session()
