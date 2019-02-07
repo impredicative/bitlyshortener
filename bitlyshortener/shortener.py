@@ -152,7 +152,7 @@ class Shortener:
         if len(set(long_urls)) > 1:
             strategy_desc = 'Concurrently'
             num_workers = min(num_long_urls, self._max_workers)
-            resource_desc = f' using up to {num_workers} worker threads'
+            resource_desc = f' using {num_workers} workers'
             mapper = self._executor.map
         else:
             strategy_desc = 'Serially'
@@ -165,8 +165,8 @@ class Shortener:
         num_short_urls = len(short_urls)
         assert num_long_urls == num_short_urls
         urls_per_second = num_short_urls / time_used
-        log.info('%s retrieved %s short URLs in %.1fs at a rate of %.0f/s. %s', strategy_desc, num_short_urls,
-                 time_used, urls_per_second, self._cache_state())
+        log.info('%s retrieved %s short URLs%s in %.1fs at a rate of %.0f/s. %s', strategy_desc, num_short_urls,
+                 resource_desc, time_used, urls_per_second, self._cache_state())
         return short_urls
 
     def shorten_urls_to_dict(self, long_urls: Sequence[str]) -> Dict[str, str]:
