@@ -4,7 +4,7 @@ It requires and uses one or more generic access tokens provided by Bitly which i
 It is nevertheless limited by per-IP rate limits.
 As a disclaimer, this is an unofficial package and it has no association with Bitly.
 
-Expanding a shortened URL and other Bitly operations are outside the scope of this package.
+Other Bitly operations are outside the scope of this package.
 
 The following are the known rate limits per token:
 * Per minute: 100 (presumably for status 200 or 201) [[ref]](https://dev.bitly.com/v4/#section/Rate-Limiting)
