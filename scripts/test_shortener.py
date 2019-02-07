@@ -63,9 +63,11 @@ URLs = [
     'https://arxiv.org/abs/1902.00541v1',
 ]
 
+BITLY_URLs = ['https://j.mp/websniffer', 'https://j.mp/2Bo2LVf', 'https://bit.ly/2BombJQ']
+
 try:
     shortener = Shortener(tokens=tokens)
-    urls = random.sample(URLs, k={'none': 0, 'one': 1, 'some': 3, 'all': len(URLs)}['some'])
+    urls = random.sample(URLs, k={'none': 0, 'one': 1, 'some': 3, 'all': len(URLs)}['all'])
 
     print(shortener.shorten_urls(urls))
     print(shortener.shorten_urls_to_dict(urls[::-1]))

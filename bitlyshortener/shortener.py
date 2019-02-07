@@ -49,8 +49,9 @@ class Shortener:
         log.debug('Max cache size is %s.', max_cache_size)
 
     def _init_requests_session(self) -> None:
-        self._thread_local.session = requests.Session()
-        log.debug('Initialized requests session having object ID %x.', id(self._thread_local.session))
+        self._thread_local.session_post = requests.Session()
+        self._thread_local.session_head = requests.Session()
+        log.debug('Initialized requests sessions.')
 
     def _init_executor(self) -> None:
         self._max_workers = min(config.MAX_WORKERS, len(self._tokens) * config.MAX_WORKERS_PER_TOKEN)
@@ -89,9 +90,9 @@ class Shortener:
             try:
                 log.debug('Requesting %s.', response_desc)
                 start_time = time.monotonic()
-                response = self._thread_local.session.post(url=endpoint, json={'long_url': long_url},
-                                                           allow_redirects=False, timeout=config.REQUEST_TIMEOUT,
-                                                           headers={'Authorization': f'Bearer {token}'})
+                response = self._thread_local.session_post.post(url=endpoint, json={'long_url': long_url},
+                                                                allow_redirects=False, timeout=config.REQUEST_TIMEOUT,
+                                                                headers={'Authorization': f'Bearer {token}'})
                 time_used = time.monotonic() - start_time
                 response_json = response.json()
                 short_url_desc = f'with link {response_json["link"]}' if ('link' in response_json) else 'with no link'
@@ -104,6 +105,21 @@ class Shortener:
                 if isinstance(exception, (requests.ConnectTimeout, requests.ConnectionError)):  # type: ignore
                     log.warning('Error receiving %s. %s', response_desc, exception_desc)
                 elif isinstance(exception, requests.HTTPError):
+                    if response.status_code == 400 and response_json['message'] == 'ALREADY_A_BITLY_LINK':
+                        # Note: A preexisting Bitly link can use one of many domains, not just j.mp. It can also be
+                        # a custom link or not. A custom link cannot be encoded to an integer for caching. Such a link
+                        # must be normalized.
+                        log.debug('Requesting actual long URL for %s as it is already a Bitly link.', long_url)
+                        start_time = time.monotonic()
+                        response = self._thread_local.session_head.head(long_url, allow_redirects=False,
+                                                                        timeout=config.REQUEST_TIMEOUT)
+                        time_used = time.monotonic() - start_time
+                        actual_long_url = response.headers['Location']
+                        log.debug('Received actual long URL for %s which is %s with status code %s in %.1fs. It will '
+                                  'be shortened.',
+                                  long_url, actual_long_url, response.status_code, time_used)
+                        assert response.status_code == 301
+                        return self._long_url_to_int_id(actual_long_url)
                     log.warning('Error receiving %s. If this is due to token-specific rate limit, consider using more '
                                 'tokens, although an IP rate limit nevertheless applies. The response status code is '
                                 '%s and text is %s. %s',

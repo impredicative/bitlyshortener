@@ -40,13 +40,20 @@ from bitlyshortener import Shortener
 tokens_pool = ['9fbe2864bb8872f5027c103321ff91be90aea687', '0cbe3864bc8872f5027c103321ff91be30aea787']
 shortener = Shortener(tokens=tokens_pool, max_cache_size=8192)
 
+# Shorten to list
 urls = ['https://paperswithcode.com/sota', 'https://arxiv.org/', 'https://arxiv.org/list/cs.LG/recent']
 shortener.shorten_urls(urls)
 ['https://j.mp/2TuIwfz', 'https://j.mp/2t8R7cu', 'https://j.mp/2GohbIt']
 
+# Shorten to dict
 urls = {'https://news.google.com', 'https://yahoo.com/'}
 shortener.shorten_urls_to_dict(urls)
 {'https://news.google.com': 'https://j.mp/2TzvYnq', 'https://yahoo.com/': 'https://j.mp/2TCihE4'}
+
+# Shorten diverse preexisting Bitly links to list
+urls = ['https://j.mp/websniffer', 'https://j.mp/2Bo2LVf', 'https://bit.ly/2BombJQ']
+shortener.shorten_urls(urls)
+['https://j.mp/2BmGKGw', 'https://j.mp/2BombJQ', 'https://j.mp/2TzOqwi']
 ```
 
 To obtain the fastest response, URLs must be shortened together in a batch as in the examples above.
@@ -56,3 +63,4 @@ If eight tokens are supplied, then not 8 * 5 = 40, but a max of 32 concurrent wo
 The max limit can, if really necessary, be increased by setting `config.MAX_WORKERS` before initializing the shortener.
 
 Returned short links use the `j.mp` domain with HTTPS.
+Any preexisting Bitly short links are also normalized to use this domain.
