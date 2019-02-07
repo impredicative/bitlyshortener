@@ -43,9 +43,13 @@ shortener = Shortener(tokens=tokens_pool, max_cache_size=8192)
 urls = ['https://paperswithcode.com/sota', 'https://arxiv.org/', 'https://arxiv.org/list/cs.LG/recent']
 shortener.shorten_urls(urls)
 ['https://j.mp/2TuIwfz', 'https://j.mp/2t8R7cu', 'https://j.mp/2GohbIt']
+
+urls = {'https://news.google.com', 'https://yahoo.com/'}
+shortener.shorten_urls_to_dict(urls)
+{'https://news.google.com': 'https://j.mp/2TzvYnq', 'https://yahoo.com/': 'https://j.mp/2TCihE4'}
 ```
 
-To obtain the fastest response, URLs must be shortened in a batch as in the example above.
+To obtain the fastest response, URLs must be shortened together in a batch as in the examples above.
 A thread pool of up to 32 concurrent requesters can be used, but no more than up to five per randomized token.
 For example, if two tokens are supplied, up to 2 * 5 = 10 concurrent workers are used.
 If eight tokens are supplied, then not 8 * 5 = 40, but a max of 32 concurrent workers are used.

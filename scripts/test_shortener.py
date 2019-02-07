@@ -65,10 +65,10 @@ URLs = [
 
 try:
     shortener = Shortener(tokens=tokens)
-    urls = random.sample(URLs, k={'none': 0, 'one': 1, 'some': 3, 'all': len(URLs)}['none'])
+    urls = random.sample(URLs, k={'none': 0, 'one': 1, 'some': 3, 'all': len(URLs)}['some'])
 
     print(shortener.shorten_urls(urls))
-    print(shortener.shorten_urls(urls[::-1]))
+    print(shortener.shorten_urls_to_dict(urls[::-1]))
 
 except Exception:
     time.sleep(0.01)  # Delay for longs to flush.

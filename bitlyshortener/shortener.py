@@ -4,7 +4,7 @@ import logging
 import random
 import time
 import threading
-from typing import List
+from typing import Dict, List, Sequence
 
 from . import config, exc
 from .util import BytesIntEncoder
@@ -15,7 +15,7 @@ log = logging.getLogger(__name__)
 
 
 class Shortener:
-    def __init__(self, *, tokens: List[str], max_cache_size: int = config.MIN_CACHE_SIZE):
+    def __init__(self, *, tokens: Sequence[str], max_cache_size: int = config.MIN_CACHE_SIZE):
         self._tokens = sorted(set(tokens))  # Sorted for subsequent reproducible randomization.
         self._max_cache_size = max_cache_size
         self._check_args()
@@ -131,7 +131,7 @@ class Shortener:
         short_url = self.shorten_urls([long_url])
         log.debug('Tested API for long URL %s. Received short URL %s.', long_url, short_url)
 
-    def shorten_urls(self, long_urls: List[str]) -> List[str]:
+    def shorten_urls(self, long_urls: Sequence[str]) -> List[str]:
         num_long_urls = len(long_urls)
         if len(set(long_urls)) > 1:
             strategy_desc = 'Concurrently'
@@ -152,3 +152,9 @@ class Shortener:
         log.info('%s retrieved %s short URLs in %.1fs at a rate of %.0f/s. %s', strategy_desc, num_short_urls,
                  time_used, urls_per_second, self._cache_state())
         return short_urls
+
+    def shorten_urls_to_dict(self, long_urls: Sequence[str]) -> Dict[str, str]:
+        long_urls = set(long_urls)  # type: ignore
+        short_urls = self.shorten_urls(long_urls)
+        url_map = dict(zip(long_urls, short_urls))
+        return url_map
