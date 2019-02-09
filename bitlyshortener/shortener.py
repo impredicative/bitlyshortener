@@ -68,6 +68,26 @@ class Shortener:
         short_url = f'https://j.mp/{url_id_}'
         return short_url
 
+    def _lengthen_url(self, short_url: str) -> str:
+        short_url = short_url.strip()
+        log.debug('Requesting long URL for short URL %s.', short_url)
+        try:
+            start_time = time.monotonic()
+            response = self._thread_local.session_head.head(short_url, allow_redirects=False,
+                                                            timeout=config.REQUEST_TIMEOUT)
+            time_used = time.monotonic() - start_time
+            response.raise_for_status()
+        except (requests.HTTPError, requests.ConnectionError, requests.ConnectTimeout) as exception:
+            exception_desc = f'The exception is: {exception.__class__.__qualname__}: {exception}'
+            log.error('Error receiving long URL for short URL %s. The response status code is %s. %s',
+                      short_url, response.status_code, exception_desc)
+            raise
+        assert response.status_code == 301
+        long_url = response.headers['Location']
+        log.debug('Received long URL for short URL %s which is %s with status code %s in %.1fs.',
+                  short_url, long_url, response.status_code, time_used)
+        return long_url
+
     def _long_url_to_int_id(self, long_url: str) -> int:  # type: ignore
         # Can raise: requests.HTTPError, requests.ConnectionError, requests.ConnectTimeout
         long_url = long_url.strip()
@@ -95,7 +115,7 @@ class Shortener:
                                                                 headers={'Authorization': f'Bearer {token}'})
                 time_used = time.monotonic() - start_time
                 response_json = response.json()
-                short_url_desc = f'with link {response_json["link"]}' if ('link' in response_json) else 'with no link'
+                short_url_desc = f'with link {response_json["link"]}' if ('link' in response_json) else 'without link'
                 log.debug('Received %s having status code %s %s in %.1fs.',
                           response_desc, response.status_code, short_url_desc, time_used)
                 response.raise_for_status()
@@ -108,21 +128,12 @@ class Shortener:
                     if response.status_code == 400 and response_json['message'] == 'ALREADY_A_BITLY_LINK':
                         # Note: A preexisting Bitly link can use one of many domains, not just j.mp. It can also be
                         # a custom link or not. A custom link cannot be encoded to an integer for caching. Such a link
-                        # must be normalized.
-                        log.debug('Requesting actual long URL for %s as it is already a Bitly link.', long_url)
-                        start_time = time.monotonic()
-                        response = self._thread_local.session_head.head(long_url, allow_redirects=False,
-                                                                        timeout=config.REQUEST_TIMEOUT)
-                        time_used = time.monotonic() - start_time
-                        actual_long_url = response.headers['Location']
-                        log.debug('Received actual long URL for %s which is %s with status code %s in %.1fs. It will '
-                                  'be shortened.',
-                                  long_url, actual_long_url, response.status_code, time_used)
-                        assert response.status_code == 301
+                        # must be validated and normalized.
+                        actual_long_url = self._lengthen_url(long_url)
                         return self._long_url_to_int_id(actual_long_url)
                     log.warning('Error receiving %s. If this is due to token-specific rate limit, consider using more '
                                 'tokens, although an IP rate limit nevertheless applies. The response status code is '
-                                '%s and text is %s. %s',
+                                '%s and text is %s. %s',  # Still just a warning, and not an error yet.
                                 response_desc, response.status_code, response.text, exception_desc)
                     if response.status_code == 400:  # Bad request.
                         raise
