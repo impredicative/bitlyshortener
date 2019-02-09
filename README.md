@@ -56,8 +56,8 @@ shortener.shorten_urls(urls)
 ['https://j.mp/2BtckCt', 'https://j.mp/2BlS1qw', 'https://j.mp/2TEVtUt', 'https://j.mp/2BmjqbZ']
 
 # Show cache info
-shortener.cache_info()
-{'LRU': CacheInfo(hits=0, misses=9, maxsize=2048, currsize=9)}
+shortener.cache_info
+{'Shortener._long_url_to_int_id': CacheInfo(hits=0, misses=9, maxsize=2048, currsize=9)}
 ```
 
 To obtain the fastest response, URLs must be shortened together in a batch as in the examples above.

@@ -170,8 +170,10 @@ class Shortener:
         short_url = self.shorten_urls([long_url])
         log.debug('Tested API for long URL %s. Received short URL %s.', long_url, short_url)
 
+    @property
     def cache_info(self) -> Dict[str, _CacheInfo]:
-        return {'LRU': self._long_url_to_int_id.cache_info()}
+        source = self._long_url_to_int_id
+        return {source.__qualname__: source.cache_info()}  # type: ignore
 
     def shorten_urls(self, long_urls: Sequence[str]) -> List[str]:
         num_long_urls = len(long_urls)
