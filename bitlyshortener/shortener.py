@@ -5,6 +5,7 @@ import random
 import time
 import threading
 from typing import Dict, List, Sequence
+from urllib.parse import urlparse
 
 from . import config, exc
 from .util import BytesIntEncoder
@@ -68,7 +69,13 @@ class Shortener:
         short_url = f'https://j.mp/{url_id_}'
         return short_url
 
+    @staticmethod
+    def _is_known_short_url(url: str) -> bool:
+        result = urlparse(url)
+        return (result.netloc in config.KNOWN_SHORT_DOMAINS) and (result.scheme in {'https', 'http'})
+
     def _lengthen_url(self, short_url: str) -> str:
+        # Can raise: requests.HTTPError, requests.ConnectionError, requests.ConnectTimeout
         short_url = short_url.strip()
         log.debug('Requesting long URL for short URL %s.', short_url)
         try:
@@ -91,6 +98,11 @@ class Shortener:
     def _long_url_to_int_id(self, long_url: str) -> int:  # type: ignore
         # Can raise: requests.HTTPError, requests.ConnectionError, requests.ConnectTimeout
         long_url = long_url.strip()
+        if self._is_known_short_url(long_url):
+            # Note: A preexisting Bitly link can use one of many domains, not just j.mp. It can also be
+            # a custom link or not. A custom link cannot be encoded to an integer for caching. Such a link
+            # must be validated and normalized.
+            long_url = self._lengthen_url(long_url)
         if len(self._tokens) > 1:
             randomizer = random.Random(long_url)  # For reproducible randomization.
             # Reproducibility of randomization is useful so as to prevent creating the same short URL under multiple

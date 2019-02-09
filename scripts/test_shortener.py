@@ -63,7 +63,7 @@ URLs = [
     'https://arxiv.org/abs/1902.00541v1',
 ]
 
-BITLY_URLs = ['https://j.mp/websniffer', 'https://j.mp/2Bo2LVf', 'https://bit.ly/2BombJQ']
+BITLY_URLs = ['https://j.mp/websniffer', 'http://j.mp/2Bo2LVf', 'http://bit.ly/2BombJQ', 'https://cnn.it/2Ggb2ih']
 
 try:
     shortener = Shortener(tokens=tokens)
