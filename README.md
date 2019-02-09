@@ -51,9 +51,9 @@ shortener.shorten_urls_to_dict(urls)
 {'https://news.google.com': 'https://j.mp/2TzvYnq', 'https://yahoo.com/': 'https://j.mp/2TCihE4'}
 
 # Shorten diverse preexisting Bitly links to list
-urls = ['https://j.mp/websniffer', 'https://j.mp/2Bo2LVf', 'https://bit.ly/2BombJQ']
+urls = ['http://j.mp/2Bo2LVf', 'http://bit.ly/2BombJQ', 'https://cnn.it/2Ggb2ih', 'https://j.mp/websniffer']
 shortener.shorten_urls(urls)
-['https://j.mp/2BmGKGw', 'https://j.mp/2BombJQ', 'https://j.mp/2TzOqwi']
+['https://j.mp/2BtckCt', 'https://j.mp/2BlS1qw', 'https://j.mp/2TEVtUt', 'https://j.mp/2BmjqbZ']
 ```
 
 To obtain the fastest response, URLs must be shortened together in a batch as in the examples above.
