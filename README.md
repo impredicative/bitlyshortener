@@ -57,7 +57,7 @@ shortener.shorten_urls(urls)
 
 # Show cache info
 shortener.cache_info()
-{'LRU': CacheInfo(hits=0, misses=0, maxsize=2048, currsize=9)}
+{'LRU': CacheInfo(hits=0, misses=9, maxsize=2048, currsize=9)}
 ```
 
 To obtain the fastest response, URLs must be shortened together in a batch as in the examples above.
