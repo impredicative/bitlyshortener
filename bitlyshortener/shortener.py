@@ -84,7 +84,7 @@ class Shortener:
                                                             timeout=config.REQUEST_TIMEOUT)
             time_used = time.monotonic() - start_time
             response.raise_for_status()
-        except (requests.HTTPError, requests.ConnectionError, requests.ConnectTimeout) as exception:
+        except (requests.HTTPError, requests.ConnectionError, requests.ConnectTimeout) as exception:  # type: ignore
             exception_desc = f'The exception is: {exception.__class__.__qualname__}: {exception}'
             log.error('Error receiving long URL for short URL %s. The response status code is %s. %s',
                       short_url, response.status_code, exception_desc)
