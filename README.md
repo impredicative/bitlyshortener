@@ -37,7 +37,7 @@ Usage examples:
 ```python
 from bitlyshortener import Shortener
 
-tokens_pool = ['9fbe2864bb8872f5027c103321ff91be90aea687', '0cbe3864bc8872f5027c103321ff91be30aea787']
+tokens_pool = ['9fbe2864bb8872f5027c103321ff91be90aea687', '0cbe3864bc8872f5027c103321ff91be30aea787']  # Use your own.
 shortener = Shortener(tokens=tokens_pool, max_cache_size=8192)
 
 # Shorten to list
@@ -54,6 +54,10 @@ shortener.shorten_urls_to_dict(urls)
 urls = ['http://j.mp/2Bo2LVf', 'http://bit.ly/2BombJQ', 'https://cnn.it/2Ggb2ih', 'https://j.mp/websniffer']
 shortener.shorten_urls(urls)
 ['https://j.mp/2BtckCt', 'https://j.mp/2BlS1qw', 'https://j.mp/2TEVtUt', 'https://j.mp/2BmjqbZ']
+
+# Show cache info
+shortener.cache_info()
+{'LRU': CacheInfo(hits=0, misses=0, maxsize=2048, currsize=9)}
 ```
 
 To obtain the fastest response, URLs must be shortened together in a batch as in the examples above.

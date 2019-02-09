@@ -1,5 +1,5 @@
 import concurrent.futures
-from functools import lru_cache
+from functools import _CacheInfo, lru_cache
 import logging
 import random
 import time
@@ -169,6 +169,9 @@ class Shortener:
         log.debug('Testing API for long URL %s.', long_url)
         short_url = self.shorten_urls([long_url])
         log.debug('Tested API for long URL %s. Received short URL %s.', long_url, short_url)
+
+    def cache_info(self) -> Dict[str, _CacheInfo]:
+        return {'LRU': self._long_url_to_int_id.cache_info()}
 
     def shorten_urls(self, long_urls: Sequence[str]) -> List[str]:
         num_long_urls = len(long_urls)
