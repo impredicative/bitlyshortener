@@ -147,7 +147,8 @@ class Shortener:
                                 'tokens, although an IP rate limit nevertheless applies. The response status code is '
                                 '%s and text is %s. %s',  # Still just a warning, and not an error yet.
                                 response_desc, response.status_code, response.text, exception_desc)
-                    if response.status_code == 400:  # Bad request.
+                    if response.status_code == 400:
+                        log.error('The response status code is 400 and so the request will not be reattempted.')
                         raise
                 if not attempts:
                     log.error('Exhausted all %s attempts requesting response from %s for long URL %s.',
