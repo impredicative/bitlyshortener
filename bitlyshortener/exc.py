@@ -20,3 +20,7 @@ class ShortenerError(Exception):
 
 class ArgsError(ShortenerError):
     pass
+
+
+class RequestError(ShortenerError):
+    pass

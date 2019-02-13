@@ -75,7 +75,7 @@ class Shortener:
         return (result.netloc in config.KNOWN_SHORT_DOMAINS) and (result.scheme in {'https', 'http'})
 
     def _lengthen_url(self, short_url: str) -> str:
-        # Can raise: requests.HTTPError, requests.ConnectionError, requests.ConnectTimeout
+        # Can raise: exc.RequestError
         short_url = short_url.strip()
         log.debug('Requesting long URL for short URL %s.', short_url)
         try:
@@ -85,10 +85,9 @@ class Shortener:
             time_used = time.monotonic() - start_time
             response.raise_for_status()
         except (requests.HTTPError, requests.ConnectionError, requests.ConnectTimeout) as exception:  # type: ignore
-            exception_desc = f'The exception is: {exception.__class__.__qualname__}: {exception}'
-            log.error('Error receiving long URL for short URL %s. The response status code is %s. %s',
-                      short_url, response.status_code, exception_desc)
-            raise
+            exc_desc = f'The error is: {exception.__class__.__qualname__}: {exception}'
+            msg = f'Error receiving long URL for short URL {short_url}. {exc_desc}'
+            raise exc.RequestError(msg) from None
         assert response.status_code == 301
         long_url = response.headers['Location']
         log.debug('Received long URL for short URL %s which is %s with status code %s in %.1fs.',
@@ -96,7 +95,7 @@ class Shortener:
         return long_url
 
     def _long_url_to_int_id(self, long_url: str) -> int:  # type: ignore
-        # Can raise: requests.HTTPError, requests.ConnectionError, requests.ConnectTimeout
+        # Can raise: exc.RequestError
         long_url = long_url.strip()
         if self._is_known_short_url(long_url):
             # Note: A preexisting Bitly link can use one of many domains, not just j.mp. It can also be
@@ -133,9 +132,9 @@ class Shortener:
                 response.raise_for_status()
                 break
             except (requests.HTTPError, requests.ConnectionError, requests.ConnectTimeout) as exception:  # type: ignore
-                exception_desc = f'The exception is: {exception.__class__.__qualname__}: {exception}'
+                exc_desc = f'The error is: {exception.__class__.__qualname__}: {exception}'
                 if isinstance(exception, (requests.ConnectTimeout, requests.ConnectionError)):  # type: ignore
-                    log.warning('Error receiving %s. %s', response_desc, exception_desc)
+                    log.warning('Error receiving %s. %s', response_desc, exc_desc)
                 elif isinstance(exception, requests.HTTPError):
                     if response.status_code == 400 and response_json['message'] == 'ALREADY_A_BITLY_LINK':
                         # Note: A preexisting Bitly link can use one of many domains, not just j.mp. It can also be
@@ -146,14 +145,14 @@ class Shortener:
                     log.warning('Error receiving %s. If this is due to token-specific rate limit, consider using more '
                                 'tokens, although an IP rate limit nevertheless applies. The response status code is '
                                 '%s and text is %s. %s',  # Still just a warning, and not an error yet.
-                                response_desc, response.status_code, response.text, exception_desc)
+                                response_desc, response.status_code, response.text, exc_desc)
                     if response.status_code == 400:
-                        log.error('The response status code is 400 and so the request will not be reattempted.')
-                        raise
+                        msg = f'The response status code is 400 and so the request will not be reattempted. {exc_desc}'
+                        raise exc.RequestError(msg) from None
                 if not attempts:
-                    log.error('Exhausted all %s attempts requesting response from %s for long URL %s.',
-                              num_max_attempts, endpoint_desc, long_url)
-                    raise
+                    msg = f'Exhausted all {num_max_attempts} attempts requesting response from {num_max_attempts} ' \
+                        f'for long URL {long_url}. {exc_desc}'
+                    raise exc.RequestError(msg) from None
         assert response.status_code in (200, 201)  # Investigational.
         url_id = response_json['link'].rpartition('/')[-1]
         url_id = self._bytes_int_encoder.encode(url_id.encode())
