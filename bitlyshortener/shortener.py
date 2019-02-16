@@ -4,7 +4,7 @@ import logging
 import random
 import time
 import threading
-from typing import Dict, List, Sequence
+from typing import Dict, List, Sequence, Set, Union
 from urllib.parse import urlparse
 
 from . import config, exc
@@ -175,7 +175,7 @@ class Shortener:
         source = self._long_url_to_int_id
         return {source.__qualname__: source.cache_info()}  # type: ignore
 
-    def shorten_urls(self, long_urls: Sequence[str]) -> List[str]:
+    def shorten_urls(self, long_urls: Union[Sequence[str], Set[str]]) -> List[str]:
         num_long_urls = len(long_urls)
         if len(set(long_urls)) > 1:
             strategy_desc = 'Concurrently'
@@ -198,7 +198,7 @@ class Shortener:
         return short_urls
 
     def shorten_urls_to_dict(self, long_urls: Sequence[str]) -> Dict[str, str]:
-        long_urls = set(long_urls)  # type: ignore
+        long_urls = set(long_urls)
         short_urls = self.shorten_urls(long_urls)
         url_map = dict(zip(long_urls, short_urls))
         return url_map
