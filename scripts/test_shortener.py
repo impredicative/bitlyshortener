@@ -66,7 +66,7 @@ URLs = [
 BITLY_URLs = ['https://j.mp/websniffer', 'http://j.mp/2Bo2LVf', 'http://bit.ly/2BombJQ', 'https://cnn.it/2Ggb2ih']
 
 try:
-    shortener = Shortener(tokens=tokens)
+    shortener = Shortener(tokens=tokens, max_cache_size=128)
     urls = random.sample(URLs, k=min(len(URLs), {'none': 0, 'one': 1, 'some': 3, 'all': len(URLs)}['some']))
 
     print(shortener.shorten_urls(urls))

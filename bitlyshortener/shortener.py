@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 
 
 class Shortener:
-    def __init__(self, *, tokens: Sequence[str], max_cache_size: int = config.MIN_CACHE_SIZE):
+    def __init__(self, *, tokens: Sequence[str], max_cache_size: int = config.DEFAULT_CACHE_SIZE):
         self._tokens = sorted(set(tokens))  # Sorted for subsequent reproducible randomization.
         self._max_cache_size = max_cache_size
         self._check_args()
@@ -31,7 +31,7 @@ class Shortener:
         cache_info = self._long_url_to_int_id.cache_info()
         calls = cache_info.hits + cache_info.misses
         hit_percentage = ((100 * cache_info.hits) / calls) if (calls != 0) else 0
-        size_percentage = (100 * cache_info.currsize) / cache_info.maxsize
+        size_percentage = ((100 * cache_info.currsize) / cache_info.maxsize) if cache_info.maxsize else 100
         cache_state = f'Cache state is: hits={cache_info.hits}, currsize={cache_info.currsize}, ' \
                       f'hit_rate={hit_percentage:.0f}%, size_rate={size_percentage:.0f}%'
         return cache_state
@@ -44,9 +44,8 @@ class Shortener:
         log.debug('Number of unique tokens is %s.', len(tokens))
 
         max_cache_size = self._max_cache_size
-        if (not isinstance(max_cache_size, int)) or (max_cache_size < config.MIN_CACHE_SIZE):
-            raise exc.ArgsError(f'Max cache size must be an integer ≥{config.MIN_CACHE_SIZE}, but it is '
-                                f'{max_cache_size}.')
+        if (not isinstance(max_cache_size, int)) or (max_cache_size < 0):
+            raise exc.ArgsError(f'Max cache size must be an integer ≥0, but it is {max_cache_size}.')
         log.debug('Max cache size is %s.', max_cache_size)
 
     def _init_requests_session(self) -> None:
