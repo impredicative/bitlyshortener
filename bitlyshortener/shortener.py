@@ -23,6 +23,7 @@ class Shortener:
 
         self._bytes_int_encoder = BytesIntEncoder()
         self._long_url_to_int_id = lru_cache(maxsize=self._max_cache_size)(self._long_url_to_int_id)  # type: ignore  # Instance level cache
+        self._init_thread_id = threading.get_ident()
         self._init_executor()
         if config.TEST_API_ON_INIT:
             self._test()
@@ -176,7 +177,7 @@ class Shortener:
 
     def shorten_urls(self, long_urls: Union[Sequence[str], Set[str]]) -> List[str]:
         num_long_urls = len(long_urls)
-        if len(set(long_urls)) > 1:
+        if (len(set(long_urls)) > 1) or (threading.get_ident() != self._init_thread_id):
             strategy_desc = 'Concurrently'
             num_workers = min(num_long_urls, self._max_workers)
             resource_desc = f' using {num_workers} workers'
