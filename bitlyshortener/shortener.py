@@ -84,7 +84,7 @@ class Shortener:
                                                             timeout=config.REQUEST_TIMEOUT)
             time_used = time.monotonic() - start_time
             response.raise_for_status()
-        except (requests.HTTPError, requests.ConnectionError, requests.ConnectTimeout) as exception:  # type: ignore
+        except (requests.HTTPError, requests.ConnectionError, requests.Timeout) as exception:
             exc_desc = f'The error is: {exception.__class__.__qualname__}: {exception}'
             msg = f'Error receiving long URL for short URL {short_url}. {exc_desc}'
             raise exc.RequestError(msg) from None
@@ -131,9 +131,9 @@ class Shortener:
                           response_desc, response.status_code, short_url_desc, time_used)
                 response.raise_for_status()
                 break
-            except (requests.HTTPError, requests.ConnectionError, requests.ConnectTimeout) as exception:  # type: ignore
+            except (requests.HTTPError, requests.ConnectionError, requests.Timeout) as exception:
                 exc_desc = f'The error is: {exception.__class__.__qualname__}: {exception}'
-                if isinstance(exception, (requests.ConnectTimeout, requests.ConnectionError)):  # type: ignore
+                if isinstance(exception, (requests.Timeout, requests.ConnectionError)):
                     log.warning('Error receiving %s. %s', response_desc, exc_desc)
                 elif isinstance(exception, requests.HTTPError):
                     if response.status_code == 400 and response_json['message'] == 'ALREADY_A_BITLY_LINK':
