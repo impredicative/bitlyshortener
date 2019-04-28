@@ -9,7 +9,7 @@ Other Bitly operations are outside the scope of this package.
 The following are the known rate limits per token:
 * Per minute: 100 (presumably for status 200 or 201) [[ref]](https://dev.bitly.com/v4/#section/Rate-Limiting)
 * Per hour: 1000 (presumably for status 200 or 201) [[ref]](https://dev.bitly.com/v4/#section/Rate-Limiting) 
-* Per month: 10000 (presumably for status 201 only) [[ref] (requires login)](https://app.bitly.com/organization/1/detail)
+* Per month: 1000 (presumably for status 201 only) [[ref] (requires login)](https://app.bitly.com/organization/1/detail)
 
 ## Links
 * Code: https://github.com/impredicative/bitlyshortener/
