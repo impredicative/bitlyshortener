@@ -16,10 +16,11 @@ log = logging.getLogger(__name__)
 
 
 class Shortener:
-    def __init__(self, *, tokens: Sequence[str], max_cache_size: int = config.DEFAULT_CACHE_SIZE):
-        self._tokens = sorted(set(tokens))  # Sorted for subsequent reproducible randomization.
+    def __init__(self, *, tokens: List[str], max_cache_size: int = config.DEFAULT_CACHE_SIZE):
+        self._tokens = tokens
         self._max_cache_size = max_cache_size
         self._check_args()
+        self._tokens = sorted(self._tokens)  # Sorted for subsequent reproducible randomization.
 
         self._bytes_int_encoder = BytesIntEncoder()
         self._long_url_to_int_id = lru_cache(maxsize=self._max_cache_size)(self._long_url_to_int_id)  # type: ignore  # Instance level cache
