@@ -46,7 +46,7 @@ shortener.shorten_urls(urls)
 ['https://j.mp/2TuIwfz', 'https://j.mp/2t8R7cu', 'https://j.mp/2GohbIt']
 
 # Shorten to dict
-urls = {'https://news.google.com', 'https://yahoo.com/'}
+urls = ['https://news.google.com', 'https://yahoo.com/']
 shortener.shorten_urls_to_dict(urls)
 {'https://news.google.com': 'https://j.mp/2TzvYnq', 'https://yahoo.com/': 'https://j.mp/2TCihE4'}
 

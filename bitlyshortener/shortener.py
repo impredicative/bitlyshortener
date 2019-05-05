@@ -50,6 +50,11 @@ class Shortener:
             raise exc.ArgsError(f'Max cache size must be an integer ≥0, but it is {max_cache_size}.')
         log.debug('Max cache size is %s.', max_cache_size)
 
+    @staticmethod
+    def _check_long_urls(long_urls: List[str]) -> None:
+        if not (isinstance(long_urls, list) and all(isinstance(long_url, str) for long_url in long_urls)):
+            raise exc.ArgsError('Long URLs must be a list of URL strings.')
+
     def _init_requests_session(self) -> None:
         self._thread_local.session_post = requests.Session()
         self._thread_local.session_head = requests.Session()
@@ -176,7 +181,8 @@ class Shortener:
         source = self._long_url_to_int_id
         return {source.__qualname__: source.cache_info()}  # type: ignore
 
-    def shorten_urls(self, long_urls: Union[Sequence[str], Set[str]]) -> List[str]:
+    def shorten_urls(self, long_urls: List[str]) -> List[str]:
+        self._check_long_urls(long_urls)
         num_long_urls = len(long_urls)
         if (len(set(long_urls)) > 1) or (threading.get_ident() != self._init_thread_id):
             strategy_desc = 'Concurrently'
@@ -198,8 +204,9 @@ class Shortener:
                  resource_desc, time_used, urls_per_second, self._cache_state())
         return short_urls
 
-    def shorten_urls_to_dict(self, long_urls:  Union[Sequence[str], Set[str]]) -> Dict[str, str]:
-        long_urls = set(long_urls)
+    def shorten_urls_to_dict(self, long_urls:  List[str]) -> Dict[str, str]:
+        self._check_long_urls(long_urls)
+        long_urls = list(set(long_urls))
         short_urls = self.shorten_urls(long_urls)
         url_map = dict(zip(long_urls, short_urls))
         return url_map
