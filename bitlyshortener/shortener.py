@@ -198,7 +198,7 @@ class Shortener:
                  resource_desc, time_used, urls_per_second, self._cache_state())
         return short_urls
 
-    def shorten_urls_to_dict(self, long_urls: Sequence[str]) -> Dict[str, str]:
+    def shorten_urls_to_dict(self, long_urls:  Union[Sequence[str], Set[str]]) -> Dict[str, str]:
         long_urls = set(long_urls)
         short_urls = self.shorten_urls(long_urls)
         url_map = dict(zip(long_urls, short_urls))
