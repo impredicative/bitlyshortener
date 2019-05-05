@@ -4,7 +4,7 @@ import logging
 import random
 import time
 import threading
-from typing import Dict, List, Sequence, Set, Union
+from typing import Dict, List
 from urllib.parse import urlparse
 
 from . import config, exc
