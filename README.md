@@ -6,10 +6,7 @@ As a disclaimer, this is an unofficial package and it has no association with Bi
 
 Other Bitly operations are outside the scope of this package.
 
-The following are the known rate limits per token:
-* Per minute: 100 (presumably for status 200 or 201) [[ref]](https://dev.bitly.com/v4/#section/Rate-Limiting)
-* Per hour: 1000 (presumably for status 200 or 201) [[ref]](https://dev.bitly.com/v4/#section/Rate-Limiting) 
-* Per month: 1000 (presumably for status 201 only) [[ref] (requires login)](https://app.bitly.com/organization/1/detail)
+[![cicd badge](https://github.com/impredicative/bitlyshortener/workflows/cicd/badge.svg?branch=master)](https://github.com/impredicative/bitlyshortener/actions?query=workflow%3Acicd+branch%3Amaster)
 
 ## Links
 * Code: https://github.com/impredicative/bitlyshortener/
@@ -23,6 +20,11 @@ An email address such as `YourGmailUsername+RandomSuffix@gmail.com` should work.
 It can sometimes be necessary to have the confirmation email resent.
 * In the account profile, navigate to Generic Access Token.
 * Enter password and click Generate Token.
+
+The following are the known rate limits per token:
+* Per minute: 100 (presumably for status 200 or 201) [[ref]](https://dev.bitly.com/v4/#section/Rate-Limiting)
+* Per hour: 1000 (presumably for status 200 or 201) [[ref]](https://dev.bitly.com/v4/#section/Rate-Limiting) 
+* Per month: 1000 (presumably for status 201 only) [[ref] (requires login)](https://app.bitly.com/organization/1/detail)
 
 Python 3.7+ is required.
 Any older version of Python will not work due to the use of 
