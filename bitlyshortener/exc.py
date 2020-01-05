@@ -12,7 +12,7 @@ class ShortenerError(Exception):
 
     :param msg: exception error message.
     """
-    #
+
     def __init__(self, msg: str):
         log.error(msg)
         super().__init__(msg)

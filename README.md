@@ -50,7 +50,7 @@ urls = ['https://news.google.com', 'https://yahoo.com/']
 shortener.shorten_urls_to_dict(urls)
 {'https://news.google.com': 'https://j.mp/2TzvYnq', 'https://yahoo.com/': 'https://j.mp/2TCihE4'}
 
-# Shorten diverse preexisting Bitly links to list
+# Normalize diverse preexisting Bitly links
 urls = ['http://j.mp/2Bo2LVf', 'http://bit.ly/2BombJQ', 'https://cnn.it/2Ggb2ih', 'https://j.mp/websniffer']
 shortener.shorten_urls(urls)
 ['https://j.mp/2BtckCt', 'https://j.mp/2BlS1qw', 'https://j.mp/2TEVtUt', 'https://j.mp/2BmjqbZ']
