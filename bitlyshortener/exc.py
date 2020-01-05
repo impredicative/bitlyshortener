@@ -6,7 +6,7 @@ log = logging.getLogger(__name__)
 
 
 class ShortenerError(Exception):
-    """This is the base exception class in this module.
+    """Base exception class in this module.
 
     This exception is not raised directly. All other exception classes in this module hierarchically derive from it.
 
@@ -19,8 +19,8 @@ class ShortenerError(Exception):
 
 
 class ArgsError(ShortenerError):
-    pass
+    """Exception for shortener initialization argument errors."""
 
 
 class RequestError(ShortenerError):
-    pass
+    """Exception for upstream request errors."""

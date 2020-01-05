@@ -1,10 +1,11 @@
+"""Shortener."""
 import concurrent.futures
 import logging
 import random
 import threading
 import time
 from functools import _CacheInfo, lru_cache
-from typing import Dict, List
+from typing import Any, Dict, List, cast
 from urllib.parse import urlparse
 
 import requests
@@ -16,6 +17,8 @@ log = logging.getLogger(__name__)
 
 
 class Shortener:
+    """Shortener."""
+
     def __init__(self, *, tokens: List[str], max_cache_size: int = config.DEFAULT_CACHE_SIZE):
         self._tokens = tokens
         self._max_cache_size = max_cache_size
@@ -23,15 +26,15 @@ class Shortener:
         self._tokens = sorted(self._tokens)  # Sorted for subsequent reproducible randomization.
 
         self._bytes_int_encoder = BytesIntEncoder()
-        self._long_url_to_int_id = lru_cache(maxsize=self._max_cache_size)(
+        self._long_url_to_int_id = lru_cache(maxsize=self._max_cache_size)(  # type: ignore  # Instance level cache
             self._long_url_to_int_id
-        )  # type: ignore  # Instance level cache
+        )
         self._init_executor()
         if config.TEST_API_ON_INIT:
             self._test()
 
     def _cache_state(self) -> str:
-        cache_info = self._long_url_to_int_id.cache_info()
+        cache_info = self._long_url_to_int_id.cache_info()  # type: ignore
         calls = cache_info.hits + cache_info.misses
         hit_percentage = ((100 * cache_info.hits) / calls) if (calls != 0) else 0
         size_percentage = ((100 * cache_info.currsize) / cache_info.maxsize) if cache_info.maxsize else 100
@@ -53,6 +56,7 @@ class Shortener:
         log.debug("Number of unique tokens is %s.", len(tokens))
 
         max_cache_size = self._max_cache_size
+        max_cache_size = cast(Any, max_cache_size)
         if (not isinstance(max_cache_size, int)) or (max_cache_size < 0):
             raise exc.ArgsError(f"Max cache size must be an integer ≥0, but it is {max_cache_size}.")
         log.debug("Max cache size is %s.", max_cache_size)
@@ -113,7 +117,7 @@ class Shortener:
         )
         return long_url
 
-    def _long_url_to_int_id(self, long_url: str) -> int:  # type: ignore
+    def _long_url_to_int_id(self, long_url: str) -> int:  # pylint: disable=too-many-locals,method-hidden
         # Can raise: exc.RequestError
         long_url = long_url.strip()
         if self._is_known_short_url(long_url):
@@ -209,13 +213,15 @@ class Shortener:
 
     @property
     def cache_info(self) -> Dict[str, _CacheInfo]:
+        """Return cache info."""
         source = self._long_url_to_int_id
         return {source.__qualname__: source.cache_info()}  # type: ignore
 
     def shorten_urls(self, long_urls: List[str]) -> List[str]:
+        """Return a list of short URLs for the given long URLs."""
         self._check_long_urls(long_urls)
         num_long_urls = len(long_urls)
-        if (len(set(long_urls)) > 1) or not (hasattr(self._thread_local, "session_post")):  # 2nd check prevents bugs.
+        if (len(set(long_urls)) > 1) or not hasattr(self._thread_local, "session_post"):  # 2nd check prevents bugs.
             strategy_desc = "Concurrently"
             num_workers = min(num_long_urls, self._max_workers)
             resource_desc = f" using {num_workers} workers"
@@ -243,6 +249,7 @@ class Shortener:
         return short_urls
 
     def shorten_urls_to_dict(self, long_urls: List[str]) -> Dict[str, str]:
+        """Return a mapping of short URLs for the given long URLs."""
         self._check_long_urls(long_urls)
         long_urls = list(set(long_urls))
         short_urls = self.shorten_urls(long_urls)

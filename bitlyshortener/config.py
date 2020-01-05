@@ -1,8 +1,10 @@
+"""Package configuration."""
 import logging.config
 from pathlib import Path
 
 
 def configure_logging() -> None:
+    """Configure logging."""
     logging.config.dictConfig(LOGGING)
     log = logging.getLogger(__name__)
     log.debug("Logging is configured.")
@@ -23,7 +25,7 @@ LOGGING = {  # Ref: https://docs.python.org/3/howto/logging.html#configuring-log
     "version": 1,
     "formatters": {
         "detailed": {
-            "format": "%(asctime)s %(thread)x-%(threadName)s:%(name)s:%(lineno)d:%(funcName)s:%(levelname)s: %(message)s",
+            "format": "%(asctime)s %(thread)x-%(threadName)s:%(name)s:%(lineno)d:%(funcName)s:%(levelname)s: %(message)s",  # pylint: disable=line-too-long
         },
     },
     "handlers": {

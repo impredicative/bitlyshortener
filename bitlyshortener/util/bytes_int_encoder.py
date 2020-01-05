@@ -1,11 +1,14 @@
-# Test
+"""Encode bytes as an integer and back."""
 import itertools
 import random
 import string
 import unittest
 
 
+# pylint: disable=invalid-name
 class BytesIntEncoder:  # Ref: https://stackoverflow.com/a/54500910/
+    """Encode bytes as an integer and back."""
+
     def __init__(self, chars: bytes = (string.ascii_letters + string.digits).encode()):
         num_chars = len(chars)
         translation = "".join(chr(i) for i in range(1, num_chars + 1)).encode()
@@ -14,6 +17,7 @@ class BytesIntEncoder:  # Ref: https://stackoverflow.com/a/54500910/
         self._num_bits_per_char = (num_chars + 1).bit_length()
 
     def encode(self, chars: bytes) -> int:
+        """Return an integer representation of the given bytes."""
         num_bits_per_char = self._num_bits_per_char
         output, bit_idx = 0, 0
         for chr_idx in chars.translate(self._translation_table):
@@ -22,11 +26,13 @@ class BytesIntEncoder:  # Ref: https://stackoverflow.com/a/54500910/
         return output
 
     def decode(self, i: int) -> bytes:
+        """Return the original bytes representation of the given integer."""
         maxint = (2 ** self._num_bits_per_char) - 1
         output = bytes(((i >> offset) & maxint) for offset in range(0, i.bit_length(), self._num_bits_per_char))
         return output.translate(self._reverse_translation_table)
 
 
+# pylint: disable=missing-class-docstring,missing-function-docstring
 class TestBytesIntEncoder(unittest.TestCase):
 
     chars = string.ascii_letters + string.digits

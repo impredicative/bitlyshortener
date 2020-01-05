@@ -1,13 +1,15 @@
+"""Try using the shortener."""
 import os
 import random
 import time
+from typing import cast
 
 from bitlyshortener import Shortener, config
 
 config.configure_logging()
 
-tokens = os.getenv("BITLY_TOKENS").strip().split(",")
-
+# pylint: disable=invalid-name
+TOKENS = cast(str, os.getenv("BITLY_TOKENS")).strip().split(",")
 URLs = [
     "https://arxiv.org/abs/1901.10500v2",
     "https://arxiv.org/abs/1901.08649v2",
@@ -66,7 +68,7 @@ URLs = [
 # BITLY_URLs = ["https://j.mp/websniffer", "http://j.mp/2Bo2LVf", "http://bit.ly/2BombJQ", "https://cnn.it/2Ggb2ih"]
 
 try:
-    shortener = Shortener(tokens=tokens, max_cache_size=128)
+    shortener = Shortener(tokens=TOKENS, max_cache_size=128)
     urls = random.sample(URLs, k=min(len(URLs), {"none": 0, "one": 1, "some": 3, "all": len(URLs)}["some"]))
 
     print(shortener.shorten_urls(urls))
