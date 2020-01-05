@@ -12,7 +12,7 @@ Other Bitly operations are outside the scope of this package.
 * Code: https://github.com/impredicative/bitlyshortener/
 * Release: https://pypi.org/project/bitlyshortener/
 
-## Usage
+## Requirements
 This package doesn't include any access token. To obtain one:
 * Sign up for a new Bitly account.
 An email address such as `YourGmailUsername+RandomSuffix@gmail.com` should work.
@@ -31,6 +31,7 @@ Any older version of Python will not work due to the use of
 [`ThreadPoolExecutor`](https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor)
 with an *initializer*.
 
+## Usage
 To install the package, run:
 
     pip install bitlyshortener
