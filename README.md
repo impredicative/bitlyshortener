@@ -13,12 +13,14 @@ Other Bitly operations are outside the scope of this package.
 * Release: https://pypi.org/project/bitlyshortener/
 
 ## Requirements
+### Tokens
 This package doesn't include any access token. To obtain one:
 * Sign up for a new Bitly account.
 An email address such as `YourGmailUsername+RandomSuffix@gmail.com` should work.
+* When asked "How will you use your links?", select "For personal use".
 * Verify the email address by clicking the link in the confirmation email.
-It can sometimes be necessary to have the confirmation email resent.
-* In the account profile, navigate to Generic Access Token.
+It can on rare occasions be necessary to have the confirmation email resent.
+* In the account profile settings, navigate to Generic Access Token.
 * Enter password and click Generate Token.
 
 The following are the known rate limits per token:
@@ -26,6 +28,9 @@ The following are the known rate limits per token:
 * Per hour: 1000 (presumably for status 200 or 201) [[ref]](https://dev.bitly.com/v4/#section/Rate-Limiting) 
 * Per month: 1000 (presumably for status 201 only) [[ref] (requires login)](https://app.bitly.com/organization/1/detail)
 
+Bitly sends a monthly email if if the account's 50% usage limit for new short links is exceeded for the month. To avoid this email by staying under the 50% limit, use twice as many tokens as necessary.
+
+### Python
 Python 3.7+ is required.
 Any older version of Python will not work due to the use of 
 [`ThreadPoolExecutor`](https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor)
