@@ -33,7 +33,7 @@ The following are the known rate limits per token:
 
 Bitly sends a monthly email if if the account's 50% usage limit for new short links is exceeded for the calendar month.
 If this email is received, it is suggested to immediately obtain and add new tokens to the pool used by this package.
-As follows, it is preferable to stay under the 50% limit for the long term by having a sufficient pool of tokens.
+As follows, it is preferable to stay under the 50% limit for the long term by having a sufficiently big pool of tokens.
 
 ### Python
 Python 3.7+ is required.
