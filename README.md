@@ -16,7 +16,7 @@ Other Bitly operations are outside the scope of this package.
 ### Tokens
 #### Obtaining tokens
 This package doesn't include any access token. To obtain one:
-* Sign up for a new Bitly account at https://bitly.com/a/sign_up.
+* Sign up for a new Bitly account at [https://bitly.com/a/sign_up](https://nullrefer.com/?https://bitly.com/a/sign_up).
 An email address such as `YourGmailUsername+RandomSuffix1@gmail.com` should work.
 * When asked "How will you use your links?", select "For personal use".
 * Verify the email address by clicking the link in the confirmation email.
