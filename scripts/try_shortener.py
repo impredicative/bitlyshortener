@@ -9,7 +9,7 @@ from bitlyshortener import Shortener, config
 config.configure_logging()
 
 # pylint: disable=invalid-name
-TOKENS = cast(str, os.getenv("BITLY_TOKENS")).strip().split(",")
+TOKENS = cast(str, os.environ["BITLY_TOKENS"]).strip().split(",")
 URLs = [
     "https://arxiv.org/abs/1901.10500v2",
     "https://arxiv.org/abs/1901.08649v2",
@@ -69,10 +69,11 @@ URLs = [
 
 try:
     shortener = Shortener(tokens=TOKENS, max_cache_size=128)
-    urls = random.sample(URLs, k=min(len(URLs), {"none": 0, "one": 1, "some": 3, "all": len(URLs)}["some"]))
+    urls = random.sample(URLs, k=min(len(URLs), {"none": 0, "one": 1, "some": 3, "all": len(URLs)}["one"]))
 
     print(shortener.shorten_urls(urls))
-    print(shortener.shorten_urls_to_dict(urls[::-1]))
+    print(shortener.shorten_urls(urls))
+    # print(shortener.shorten_urls_to_dict(urls[::-1]))
 
 except Exception:
     time.sleep(0.01)  # Delay for longs to flush.
