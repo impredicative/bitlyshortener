@@ -1,7 +1,6 @@
 # bitlyshortener
 **bitlyshortener** is a Python 3.7 based high-volume Bitly V4 URL shortener with a memory-cache.
 It requires and uses one or more generic access tokens provided by Bitly which it uses semi-randomly.
-It is nevertheless limited by per-IP rate limits.
 As a disclaimer, this is an unofficial package and it has no association with Bitly.
 
 Other Bitly operations are outside the scope of this package.
@@ -34,6 +33,8 @@ The following are the known rate limits per token:
 Bitly sends a monthly email if if the account's 50% usage limit for new short links is exceeded for the calendar month.
 If this email is received, it is suggested to immediately obtain and add new tokens to the pool used by this package.
 As follows, it is preferable to stay under the 50% limit for the long term by having a sufficiently big pool of tokens.
+
+It is unknown what the per-IP rate limit is, if any.
 
 ### Python
 Python 3.7+ is required.
