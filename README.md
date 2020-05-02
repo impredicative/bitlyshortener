@@ -11,6 +11,7 @@ Other Bitly operations are outside the scope of this package.
 ## Links
 * Code: https://github.com/impredicative/bitlyshortener/
 * Release: https://pypi.org/project/bitlyshortener/
+* Changelog: https://github.com/impredicative/bitlyshortener/releases
 
 ## Requirements
 ### Tokens
