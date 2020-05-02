@@ -1,4 +1,4 @@
-# Vulture whitelist:
-TestBytesIntEncoder  # unused class (bitlyshortener/util/bytes_int_encoder.py:30)
-test_thoroughly_with_small_str  # unused function (bitlyshortener/util/bytes_int_encoder.py:43)
-test_randomly_with_large_str  # unused function (bitlyshortener/util/bytes_int_encoder.py:50)
+shorten_urls_to_dict  # unused function (bitlyshortener/shortener.py:251)
+TestBytesIntEncoder  # unused class (bitlyshortener/util/bytes_int_encoder.py:36)
+test_thoroughly_with_small_str  # unused function (bitlyshortener/util/bytes_int_encoder.py:49)
+test_randomly_with_large_str  # unused function (bitlyshortener/util/bytes_int_encoder.py:56)

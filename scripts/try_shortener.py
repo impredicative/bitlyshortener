@@ -2,14 +2,13 @@
 import os
 import random
 import time
-from typing import cast
 
-from bitlyshortener import Shortener, config
+from bitlyshortener import Shortener, config  # pylint: disable=import-error
 
 config.configure_logging()
 
 # pylint: disable=invalid-name
-TOKENS = cast(str, os.environ["BITLY_TOKENS"]).strip().split(",")
+TOKENS = os.environ["BITLY_TOKENS"].strip().split(",")
 URLs = [
     "https://arxiv.org/abs/1901.10500v2",
     "https://arxiv.org/abs/1901.08649v2",
