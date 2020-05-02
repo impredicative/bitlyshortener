@@ -26,9 +26,9 @@ It can on rare occasions be necessary to have the confirmation email resent.
 
 #### Rate limits
 The following are the known rate limits per token:
-* Per minute: 100 (presumably for status 200 or 201) [[ref]](https://dev.bitly.com/v4/#section/Rate-Limiting)
-* Per hour: 1000 (presumably for status 200 or 201) [[ref]](https://dev.bitly.com/v4/#section/Rate-Limiting) 
-* Per month: 1000 (presumably for status 201 only) [[ref] (requires login)](https://app.bitly.com/organization/1/detail)
+* Per minute: 100 (presumably for status 200 or 201) [[ref]](https://nullrefer.com/?https://dev.bitly.com/v4/#section/Rate-Limiting)
+* Per hour: 1000 (presumably for status 200 or 201) [[ref]](https://nullrefer.com/?https://dev.bitly.com/v4/#section/Rate-Limiting) 
+* Per month: 1000 (presumably for status 201 only) [[ref] (requires login)](https://nullrefer.com/?https://app.bitly.com/organization/1/detail)
 
 Bitly sends a monthly email if if the account's 50% usage limit for new short links is exceeded for the calendar month.
 If this email is received, it is suggested to immediately obtain and add new tokens to the pool used by this package.
