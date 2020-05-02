@@ -15,3 +15,4 @@ pytest-mccabe
 pytest-mypy
 pytest-pylint
 vulture
+wheel
