@@ -19,9 +19,10 @@ This package doesn't include any access token. To obtain one:
 * Sign up for a new Bitly account at [https://bitly.com/a/sign_up](https://nullrefer.com/?https://bitly.com/a/sign_up).
 An email address such as `YourGmailUsername+RandomSuffix1@gmail.com` should work.
 * When asked "How will you use your links?", select "For personal use".
+* If presented the "Your Links Are Everything" page, click "Skip this step".
 * Verify the email address by clicking the link in the confirmation email.
 It can on rare occasions be necessary to have the confirmation email resent.
-* In the account profile settings, navigate to Generic Access Token.
+* Under "Profile Settings", select "Generic Access Token".
 * Enter password and click Generate Token.
 
 #### Rate limits
