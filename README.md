@@ -31,9 +31,9 @@ The following are the known rate limits per token:
 * Per hour: 1000 (presumably for status 200 or 201) [[ref]](https://dev.bitly.com/v4/#section/Rate-Limiting) 
 * Per month: 1000 (presumably for status 201 only) [[ref] (requires login)](https://nullrefer.com/?https://app.bitly.com/organization/1/detail)
 
-Bitly sends a monthly email if if the account's 50% usage limit for new short links is exceeded for the calendar month.
-If this email is received, it is suggested to immediately obtain and add new tokens to the pool used by this package.
-As follows, it is preferable to stay under the 50% limit for the long term by having a sufficiently big pool of tokens.
+Bitly sends a monthly email if if 50% of the account's usage limit for new short links is exceeded for the calendar month.
+If this email is received, it is suggested to immediately obtain and add additional tokens to the pool used by this package.
+As follows, it is preferable to stay under 50% of the usage limit by having a sufficiently big pool of tokens.
 
 It is unknown what the per-IP rate limit is, if any.
 
