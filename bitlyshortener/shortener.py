@@ -8,6 +8,7 @@ from functools import _CacheInfo, lru_cache
 from typing import Any, Dict, List, cast
 from urllib.parse import urlparse
 
+import cachetools.func
 import requests
 
 from . import config, exc
@@ -216,6 +217,35 @@ class Shortener:
         """Return cache info."""
         source = self._long_url_to_int_id
         return {source.__qualname__: source.cache_info()}  # type: ignore
+
+    @cachetools.func.ttl_cache(ttl=config.USAGE_CACHE_TIME)
+    def usage(self) -> float:
+        """Return the fraction of URL shortening quota used across the pool of tokens for the current calendar month.
+
+        This runs serially across all tokens and is therefore slow.
+
+        The returned value is cached for an hour for the class instance.
+        This is to attempt to prevent the usage tracking quotas from being exceeded.
+        """
+        session = requests.Session()
+        total_used, total_limit = 0, 0
+        for token in random.sample(self._tokens, len(self._tokens)):
+            request_headers = {"Authorization": f"Bearer {token}"}
+            response = session.get(config.API_URL_ORGANIZATIONS, headers=request_headers)
+            orgs = response.json()["organizations"]
+            for org in orgs:
+                guid = org["guid"]
+                response = session.get(
+                    config.API_URL_FORMAT_ORGANIZATION_LIMITS.format(organization_guid=guid), headers=request_headers
+                )
+                usages = response.json()["plan_limits"]
+                for usage in usages:
+                    if usage["name"] == "encodes":
+                        total_used += usage["count"]
+                        total_limit += usage["limit"]
+                        break
+        usage = total_used / total_limit
+        return usage
 
     def shorten_urls(self, long_urls: List[str]) -> List[str]:
         """Return a list of short URLs for the given long URLs."""

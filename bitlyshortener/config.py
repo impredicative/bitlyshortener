@@ -10,8 +10,11 @@ def configure_logging() -> None:
     log.debug("Logging is configured.")
 
 
-API_URL_BITLINKS = "https://api-ssl.bitly.com/v4/bitlinks"  # Ref: https://dev.bitly.com/v4/#operation/createFullBitlink
-API_URL_SHORTEN = "https://api-ssl.bitly.com/v4/shorten"  # Ref: https://dev.bitly.com/v4/#operation/createBitlink
+API_BASE_URL = "https://api-ssl.bitly.com/v4"  # Ref: https://dev.bitly.com/api-reference
+API_URL_BITLINKS = f"{API_BASE_URL}/bitlinks"  # Ref: https://dev.bitly.com/api-reference#createFullBitlink
+API_URL_ORGANIZATIONS = f"{API_BASE_URL}/organizations"  # Ref: https://dev.bitly.com/api-reference#getOrganizations
+API_URL_FORMAT_ORGANIZATION_LIMITS = f"{API_BASE_URL}/organizations/{{organization_guid}}/plan_limits"  # Ref: https://dev.bitly.com/api-reference#getPlanLimits  pylint: disable=line-too-long
+API_URL_SHORTEN = f"{API_BASE_URL}/shorten"  # Ref: https://dev.bitly.com/api-reference#createBitlink
 DEFAULT_CACHE_SIZE = 2048
 KNOWN_SHORT_DOMAINS = {"bit.ly", "j.mp"}
 MAX_WORKERS = 32
@@ -20,6 +23,7 @@ PACKAGE_NAME = Path(__file__).parent.stem
 REQUEST_TIMEOUT = 3
 TEST_API_ON_INIT = False
 TEST_LONG_URL = "https://python.org/"
+USAGE_CACHE_TIME = 3600
 
 LOGGING = {  # Ref: https://docs.python.org/3/howto/logging.html#configuring-logging
     "version": 1,
