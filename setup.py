@@ -18,7 +18,7 @@ setup(
     name="bitlyshortener",
     author="Ouroboros Chrysopoeia",
     author_email="impredicative@users.nomail.github.com",
-    version="0.3.5",
+    version="0.3.6",
     description="High-volume Bitly V4 URL shortener with memory-cache",
     keywords="bitly url shortener",
     long_description=(_DIR / "README.md").read_text().strip(),
