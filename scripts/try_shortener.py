@@ -68,10 +68,11 @@ URLs = [
 
 try:
     shortener = Shortener(tokens=TOKENS, max_cache_size=128)
-    urls = random.sample(URLs, k=min(len(URLs), {"none": 0, "one": 1, "some": 3, "all": len(URLs)}["one"]))
-
+    urls = random.sample(URLs, k=min(len(URLs), {"none": 0, "one": 1, "some": 3, "all": len(URLs)}["some"]))
     print(shortener.shorten_urls(urls))
+    print(shortener.usage())
     print(shortener.shorten_urls(urls))
+    print(shortener.usage())
     # print(shortener.shorten_urls_to_dict(urls[::-1]))
 
 except Exception:

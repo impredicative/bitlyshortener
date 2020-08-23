@@ -68,8 +68,9 @@ class Shortener:
             raise exc.ArgsError("Long URLs must be a list of URL strings.")
 
     def _init_requests_session(self) -> None:
-        self._thread_local.session_post = requests.Session()
+        self._thread_local.session_get = requests.Session()
         self._thread_local.session_head = requests.Session()
+        self._thread_local.session_post = requests.Session()
         log.debug("Initialized requests sessions.")
 
     def _init_executor(self) -> None:
@@ -212,6 +213,25 @@ class Shortener:
         short_url = self.shorten_urls([long_url])
         log.debug("Tested API for long URL %s. Received short URL %s.", long_url, short_url)
 
+    def _usage(self, token: str) -> Dict[str, int]:
+        session = self._thread_local.session_get
+        total_used, total_limit = 0, 0
+        request_headers = {"Authorization": f"Bearer {token}"}
+        response = session.get(config.API_URL_ORGANIZATIONS, headers=request_headers)
+        orgs = response.json()["organizations"]
+        for org in orgs:
+            guid = org["guid"]
+            response = session.get(
+                config.API_URL_FORMAT_ORGANIZATION_LIMITS.format(organization_guid=guid), headers=request_headers
+            )
+            usages = response.json()["plan_limits"]
+            for usage in usages:
+                if usage["name"] == "encodes":
+                    total_used += usage["count"]
+                    total_limit += usage["limit"]
+                    break
+        return {"used": total_used, "limit": total_limit}
+
     @property
     def cache_info(self) -> Dict[str, _CacheInfo]:
         """Return cache info."""
@@ -222,29 +242,35 @@ class Shortener:
     def usage(self) -> float:
         """Return the fraction of URL shortening quota used across the pool of tokens for the current calendar month.
 
-        This runs serially across all tokens and is therefore slow.
-
         The returned value is cached for an hour for the class instance.
-        This is to attempt to prevent the usage tracking quotas from being exceeded.
+        This is to attempt to prevent the usage tracking quota from being exceeded.
         """
-        session = requests.Session()
-        total_used, total_limit = 0, 0
-        for token in random.sample(self._tokens, len(self._tokens)):
-            request_headers = {"Authorization": f"Bearer {token}"}
-            response = session.get(config.API_URL_ORGANIZATIONS, headers=request_headers)
-            orgs = response.json()["organizations"]
-            for org in orgs:
-                guid = org["guid"]
-                response = session.get(
-                    config.API_URL_FORMAT_ORGANIZATION_LIMITS.format(organization_guid=guid), headers=request_headers
-                )
-                usages = response.json()["plan_limits"]
-                for usage in usages:
-                    if usage["name"] == "encodes":
-                        total_used += usage["count"]
-                        total_limit += usage["limit"]
-                        break
-        usage = total_used / total_limit
+        tokens = random.sample(self._tokens, len(self._tokens))
+        num_tokens = len(tokens)
+        if (num_tokens > 1) or not hasattr(self._thread_local, "session_get"):  # 2nd check prevents bugs.
+            strategy_desc = "Concurrently"
+            num_workers = min(num_tokens, self._max_workers)
+            resource_desc = f" using {num_workers} workers"
+            mapper = self._executor.map
+        else:
+            strategy_desc = "Serially"
+            resource_desc = ""
+            mapper = map  # type: ignore
+        log.debug("%s retrieving usage for %s tokens%s.", strategy_desc, num_tokens, resource_desc)
+        start_time = time.monotonic()
+        usages = list(mapper(self._usage, tokens))
+        time_used = time.monotonic() - start_time
+        usage = sum(u["used"] for u in usages) / sum(u["limit"] for u in usages)
+        rate_per_second = num_tokens / time_used
+        log.info(
+            "%s retrieved usage of %s for %s tokens%s in %.1fs at a rate of %s/s.",
+            strategy_desc,
+            f"{usage:.1%}",
+            num_tokens,
+            resource_desc,
+            time_used,
+            f"{rate_per_second:,.0f}",
+        )
         return usage
 
     def shorten_urls(self, long_urls: List[str]) -> List[str]:
@@ -266,14 +292,14 @@ class Shortener:
         time_used = time.monotonic() - start_time
         num_short_urls = len(short_urls)
         assert num_long_urls == num_short_urls
-        urls_per_second = num_short_urls / time_used
+        rate_per_second = num_short_urls / time_used
         log.info(
-            "%s retrieved %s short URLs%s in %.1fs at a rate of %.0f/s. %s",
+            "%s retrieved %s short URLs%s in %.1fs at a rate of %s/s. %s",
             strategy_desc,
             num_short_urls,
             resource_desc,
             time_used,
-            urls_per_second,
+            f"{rate_per_second:,.0f}",
             self._cache_state(),
         )
         return short_urls
