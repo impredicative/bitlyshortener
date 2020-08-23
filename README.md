@@ -29,11 +29,12 @@ It can on rare occasions be necessary to have the confirmation email resent.
 The following are the known rate limits per token:
 * Per minute: 100 (presumably for status 200 or 201) [[ref]](https://dev.bitly.com/v4/#section/Rate-Limiting)
 * Per hour: 1000 (presumably for status 200 or 201) [[ref]](https://dev.bitly.com/v4/#section/Rate-Limiting) 
-* Per month: 1000 (presumably for status 201 only) [[ref] (requires login)](https://nullrefer.com/?https://app.bitly.com/organization/1/detail)
+* Per month: 1000 (presumably for status 201 only) [[ref] (requires API use)](https://nullrefer.com/?https://dev.bitly.com/api-reference#getPlanLimits)
 
 Bitly sends a monthly email if if 50% of the account's usage limit for new short links is exceeded for the calendar month.
 If this email is received, it is suggested to immediately obtain and add additional tokens to the pool used by this package.
 As follows, it is preferable to stay under 50% of the usage limit by having a sufficiently big pool of tokens.
+It is possible to monitor the usage via the `.usage()` method as shown in the examples.
 
 It is unknown what the per-IP rate limit is, if any.
 
@@ -52,6 +53,7 @@ Usage examples:
 ```python
 from bitlyshortener import Shortener
 
+# Setup
 tokens_pool = ['9fbe2864bb8872f5027c103321ff91be90aea687', '0cbe3864bc8872f5027c103321ff91be30aea787']  # Use your own.
 shortener = Shortener(tokens=tokens_pool, max_cache_size=8192)
 
@@ -69,6 +71,10 @@ shortener.shorten_urls_to_dict(urls)
 urls = ['http://j.mp/2Bo2LVf', 'http://bit.ly/2BombJQ', 'https://cnn.it/2Ggb2ih', 'https://j.mp/websniffer']
 shortener.shorten_urls(urls)
 ['https://j.mp/2BtckCt', 'https://j.mp/2BlS1qw', 'https://j.mp/2TEVtUt', 'https://j.mp/2BmjqbZ']
+
+# Show usage for tokens pool (cached for an hour)
+shortener.usage()
+0.4604  # Means that an average of 46% of the current calendar month's URL shortening quota has been used across all tokens.
 
 # Show cache info
 shortener.cache_info
