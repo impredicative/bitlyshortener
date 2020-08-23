@@ -26,15 +26,15 @@ It can on rare occasions be necessary to have the confirmation email resent.
 * Enter password and click Generate Token.
 
 #### Rate limits
-The following are the known rate limits per token:
-* Per minute: 100 (presumably for status 200 or 201) [[ref]](https://dev.bitly.com/v4/#section/Rate-Limiting)
-* Per hour: 1000 (presumably for status 200 or 201) [[ref]](https://dev.bitly.com/v4/#section/Rate-Limiting) 
-* Per month: 1000 (presumably for status 201 only) [[ref] (requires API use)](https://nullrefer.com/?https://dev.bitly.com/api-reference#getPlanLimits)
+The following have historically been the rate limits per token:
+* Per minute: 100 (presumably for status 200 or 201)
+* Per hour: 1000 (presumably for status 200 or 201)
+* Per month: 1000 (presumably for status 201 only)
 
 Bitly sends a monthly email if if 50% of the account's usage limit for new short links is exceeded for the calendar month.
 If this email is received, it is suggested to immediately obtain and add additional tokens to the pool used by this package.
 As follows, it is preferable to stay under 50% of the usage limit by having a sufficiently big pool of tokens.
-It is possible to monitor the usage via the `.usage()` method as shown in the examples.
+It is possible to monitor the usage via the **`.usage()`** method as shown in the examples.
 
 It is unknown what the per-IP rate limit is, if any.
 
