@@ -91,6 +91,3 @@ A thread pool of up to 32 concurrent requesters can be used, but no more than up
 For example, if two tokens are supplied, up to 2 * 5 = 10 concurrent workers are used.
 If eight tokens are supplied, then not 8 * 5 = 40, but a max of 32 concurrent workers are used.
 The max limit can, if really necessary, be increased by setting `config.MAX_WORKERS` before initializing the shortener.
-
-Returned short links use the `j.mp` domain with HTTPS.
-Any preexisting Bitly short links are also normalized to use this domain.
