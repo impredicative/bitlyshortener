@@ -12,7 +12,6 @@ import cachetools.func
 import requests
 
 from . import config, exc
-from .util.bytes_int_encoder import BytesIntEncoder
 
 log = logging.getLogger(__name__)
 
@@ -20,22 +19,22 @@ log = logging.getLogger(__name__)
 class Shortener:
     """Shortener."""
 
-    def __init__(self, *, tokens: List[str], max_cache_size: int = config.DEFAULT_CACHE_SIZE):
+    def __init__(self, *, tokens: List[str], max_cache_size: int = config.DEFAULT_CACHE_SIZE, vanitize: bool = False):
         self._tokens = tokens
         self._max_cache_size = max_cache_size
+        self._vanitize = vanitize
         self._check_args()
         self._tokens = sorted(self._tokens)  # Sorted for subsequent reproducible randomization.
 
-        self._bytes_int_encoder = BytesIntEncoder()
-        self._long_url_to_int_id = lru_cache(maxsize=self._max_cache_size)(  # type: ignore  # Instance level cache
-            self._long_url_to_int_id
+        self._shorten_url = lru_cache(maxsize=self._max_cache_size)(  # type: ignore  # Instance level cache
+            self._shorten_url
         )
         self._init_executor()
         if config.TEST_API_ON_INIT:
             self._test()
 
     def _cache_state(self) -> str:
-        cache_info = self._long_url_to_int_id.cache_info()  # type: ignore
+        cache_info = self._shorten_url.cache_info()  # type: ignore
         calls = cache_info.hits + cache_info.misses
         hit_percentage = ((100 * cache_info.hits) / calls) if (calls != 0) else 0
         size_percentage = ((100 * cache_info.currsize) / cache_info.maxsize) if cache_info.maxsize else 100
@@ -46,6 +45,7 @@ class Shortener:
         return cache_state
 
     def _check_args(self) -> None:
+        # Check tokens
         tokens = self._tokens
         if not (
             tokens
@@ -56,11 +56,17 @@ class Shortener:
             raise exc.ArgsError("Tokens must be a list of one or more unique strings.")  # Tokens must not be logged.
         log.debug("Number of unique tokens is %s.", len(tokens))
 
+        # Check max cache size
         max_cache_size = self._max_cache_size
         max_cache_size = cast(Any, max_cache_size)
         if (not isinstance(max_cache_size, int)) or (max_cache_size < 0):
             raise exc.ArgsError(f"Max cache size must be an integer ≥0, but it is {max_cache_size}.")
         log.debug("Max cache size is %s.", max_cache_size)
+
+        # Check vanitize
+        vanity_status = "enabled" if self._vanitize else "disabled"
+        log.debug("Vanity domains are %s.", vanity_status)
+        # Ref: https://support.bitly.com/hc/en-us/articles/230558107-What-is-a-Custom-Domain-
 
     @staticmethod
     def _check_long_urls(long_urls: List[str]) -> None:
@@ -82,11 +88,6 @@ class Shortener:
             max_workers=self._max_workers, thread_name_prefix="Requester", initializer=self._init_requests_session
         )
         log.debug("Initialized thread pool executor.")
-
-    def _int_id_to_short_url(self, url_id: int) -> str:
-        url_id_ = self._bytes_int_encoder.decode(url_id).decode()
-        short_url = f"https://j.mp/{url_id_}"
-        return short_url
 
     @staticmethod
     def _is_known_short_url(url: str) -> bool:
@@ -119,24 +120,29 @@ class Shortener:
         )
         return long_url
 
-    def _long_url_to_int_id(self, long_url: str) -> int:  # pylint: disable=too-many-locals,method-hidden
+    def _shorten_url(self, long_url: str) -> str:  # pylint: disable=too-many-locals,method-hidden
         # Can raise: exc.RequestError
+
+        # Preprocess long URL
         long_url = long_url.strip()
         if self._is_known_short_url(long_url):
             # Note: A preexisting Bitly link can use one of many domains, not just j.mp. It can also be
             # a custom link or not. A custom link cannot be encoded to an integer for caching. Such a link
             # must be validated and normalized.
             long_url = self._lengthen_url(long_url)
-        if len(self._tokens) > 1:
+
+        # Provision attempts
+        tokens = self._tokens
+        if len(tokens) > 1:
             randomizer = random.Random(long_url)  # For reproducible randomization.
             # Reproducibility of randomization is useful so as to prevent creating the same short URL under multiple
             # tokens, as this counts toward a monthly creation quota.
-            tokens = randomizer.sample(self._tokens, len(self._tokens))
-        else:
-            tokens = self._tokens
+            tokens = randomizer.sample(tokens, len(tokens))  # Doesn't mutate original list.
         endpoints = config.API_URL_BITLINKS, config.API_URL_SHORTEN  # Specified in reverse order due to pop().
         attempts = [(endpoint, token) for endpoint in endpoints for token in tokens]
         num_max_attempts = len(attempts)
+
+        # Shorten long URL
         while attempts:
             endpoint, token = attempts.pop()
             num_attempt = num_max_attempts - len(attempts)
@@ -173,11 +179,8 @@ class Shortener:
                     log.warning("Error receiving %s. %s", response_desc, exc_desc)
                 elif isinstance(exception, requests.HTTPError):
                     if response.status_code == 400 and response_json["message"] == "ALREADY_A_BITLY_LINK":
-                        # Note: A preexisting Bitly link can use one of many domains, not just j.mp. It can also be
-                        # a custom link or not. A custom link cannot be encoded to an integer for caching. Such a link
-                        # must be validated and normalized.
                         actual_long_url = self._lengthen_url(long_url)
-                        return self._long_url_to_int_id(actual_long_url)
+                        return self._shorten_url(actual_long_url)  # Returns normalized short URL.
                     log.warning(
                         "Error receiving %s. If this is due to token-specific rate limit, consider using more "
                         "tokens, although an IP rate limit nevertheless applies. The response status code is "
@@ -196,14 +199,17 @@ class Shortener:
                         f"for long URL {long_url}. {exc_desc}"
                     )
                     raise exc.RequestError(msg) from None
-        assert response.status_code in (200, 201)  # Investigational.
-        url_id = response_json["link"].rpartition("/")[-1]
-        url_id = self._bytes_int_encoder.encode(url_id.encode())
-        return url_id
+        assert response.status_code in (200, 201)
+        short_url = response_json["link"]
 
-    def _shorten_url(self, long_url: str) -> str:
-        url_id = self._long_url_to_int_id(long_url)
-        short_url = self._int_id_to_short_url(url_id)
+        # Postprocess short URL
+        assert short_url.startswith("https://")
+        # if short_url.startswith('http://'):
+        #     short_url = short_url.replace('http://', 'https://', 1)
+        if (not self._vanitize) or (self._vanitize and short_url.startswith("https://bit.ly/")):
+            url_id = short_url.rpartition("/")[-1]
+            short_url = f"https://j.mp/{url_id}"
+
         log.debug("Returning short URL %s for long URL %s.", short_url, long_url)
         return short_url
 
@@ -235,7 +241,7 @@ class Shortener:
     @property
     def cache_info(self) -> Dict[str, _CacheInfo]:
         """Return cache info."""
-        source = self._long_url_to_int_id
+        source = self._shorten_url
         return {source.__qualname__: source.cache_info()}  # type: ignore
 
     @cachetools.func.ttl_cache(ttl=config.USAGE_CACHE_TIME)
@@ -307,7 +313,6 @@ class Shortener:
     def shorten_urls_to_dict(self, long_urls: List[str]) -> Dict[str, str]:
         """Return a mapping of short URLs for the given long URLs."""
         self._check_long_urls(long_urls)
-        long_urls = list(set(long_urls))
         short_urls = self.shorten_urls(long_urls)
         url_map = dict(zip(long_urls, short_urls))
         return url_map

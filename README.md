@@ -51,26 +51,31 @@ To install the package, run:
 
 Usage examples:
 ```python
-from bitlyshortener import Shortener
+import bitlyshortener
 
 # Setup
 tokens_pool = ['9fbe2864bb8872f5027c103321ff91be90aea687', '0cbe3864bc8872f5027c103321ff91be30aea787']  # Use your own.
-shortener = Shortener(tokens=tokens_pool, max_cache_size=256)
+shortener = bitlyshortener.Shortener(tokens=tokens_pool, max_cache_size=256)
+vanity_shortener = bitlyshortener.Shortener(tokens=tokens_pool, max_cache_size=256, vanitize=True)  # vanity=True keeps custom vanity domains when available.
 
 # Shorten to list
-urls = ['https://paperswithcode.com/sota', 'https://arxiv.org/', 'https://arxiv.org/list/cs.LG/recent']
-shortener.shorten_urls(urls)
-['https://j.mp/2TuIwfz', 'https://j.mp/2t8R7cu', 'https://j.mp/2GohbIt']
+long_urls = ['https://www.amazon.com/gp/product/B07LFJMS2S/', 'https://www.cnn.com/election/2020', 'https://paperswithcode.com/sota']
+shortener.shorten_urls(long_urls)
+['https://j.mp/3jx2gft', 'https://j.mp/31IQt7D', 'https://j.mp/2YNKi01']
+vanity_shortener.shorten_urls(long_urls)
+['https://amzn.to/3jx2gft', 'https://cnn.it/31IQt7D', 'https://j.mp/2YNKi01']
 
 # Shorten to dict
-urls = ['https://news.google.com', 'https://yahoo.com/']
-shortener.shorten_urls_to_dict(urls)
+long_urls = ['https://news.google.com', 'https://yahoo.com/']
+shortener.shorten_urls_to_dict(long_urls)
 {'https://news.google.com': 'https://j.mp/2TzvYnq', 'https://yahoo.com/': 'https://j.mp/2TCihE4'}
 
 # Normalize diverse preexisting Bitly links
 urls = ['http://j.mp/2Bo2LVf', 'http://bit.ly/2BombJQ', 'https://cnn.it/2Ggb2ih', 'https://j.mp/websniffer']
 shortener.shorten_urls(urls)
 ['https://j.mp/2BtckCt', 'https://j.mp/2BlS1qw', 'https://j.mp/2TEVtUt', 'https://j.mp/2BmjqbZ']
+vanity_shortener.shorten_urls(urls)
+['https://j.mp/3b9UzJ3', 'https://j.mp/31H7GhP', 'https://cnn.it/2YPARxb', 'https://j.mp/2EKXwDU']
 
 # Show usage for tokens pool (cached for an hour)
 shortener.usage()
@@ -78,7 +83,7 @@ shortener.usage()
 
 # Show cache info
 shortener.cache_info
-{'Shortener._long_url_to_int_id': CacheInfo(hits=0, misses=9, maxsize=256, currsize=9)}
+{'Shortener._shorten_url': CacheInfo(hits=0, misses=9, maxsize=256, currsize=9)}
 ```
 
 To obtain the fastest response, URLs must be shortened together in a batch as in the examples above.
