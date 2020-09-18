@@ -203,9 +203,8 @@ class Shortener:
         short_url = response_json["link"]
 
         # Postprocess short URL
-        assert short_url.startswith("https://")
-        # if short_url.startswith('http://'):
-        #     short_url = short_url.replace('http://', 'https://', 1)
+        if short_url.startswith("http://"):  # Example: http://citi.us/2FPqsuZ
+            short_url = short_url.replace("http://", "https://", 1)
         if (not self._vanitize) or (self._vanitize and short_url.startswith("https://bit.ly/")):
             url_id = short_url.rpartition("/")[-1]
             short_url = f"https://j.mp/{url_id}"
