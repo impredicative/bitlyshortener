@@ -2,7 +2,6 @@ autopep8
 black
 isort==4.*
 mypy
-pip
 pip-tools
 pycodestyle
 pydocstyle
@@ -15,4 +14,3 @@ pytest-pycodestyle
 pytest-pydocstyle
 pytest-pylint
 vulture
-wheel
