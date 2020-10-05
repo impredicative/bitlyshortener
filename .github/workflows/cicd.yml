@@ -20,8 +20,7 @@ jobs:
     - name: Install dependencies and run tests
       run: |
         python -V
-        python -m pip install --upgrade pip
-        pip install -U -r ./requirements/install.in -r ./requirements/dev.in
+        ./scripts/install_requirements.sh
         ./scripts/test.sh
   cd:
     runs-on: ubuntu-latest
