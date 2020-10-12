@@ -13,7 +13,7 @@ def configure_logging() -> None:
 API_BASE_URL = "https://api-ssl.bitly.com/v4"  # Ref: https://dev.bitly.com/api-reference
 API_URL_BITLINKS = f"{API_BASE_URL}/bitlinks"  # Ref: https://dev.bitly.com/api-reference#createFullBitlink
 API_URL_ORGANIZATIONS = f"{API_BASE_URL}/organizations"  # Ref: https://dev.bitly.com/api-reference#getOrganizations
-API_URL_FORMAT_ORGANIZATION_LIMITS = f"{API_BASE_URL}/organizations/{{organization_guid}}/plan_limits"  # Ref: https://dev.bitly.com/api-reference#getPlanLimits  pylint: disable=line-too-long
+API_URL_FORMAT_ORGANIZATION_LIMITS = f"{API_BASE_URL}/organizations/{{organization_guid}}/plan_limits"  # Ref: https://dev.bitly.com/api-reference#getPlanLimits
 API_URL_SHORTEN = f"{API_BASE_URL}/shorten"  # Ref: https://dev.bitly.com/api-reference#createBitlink
 DEFAULT_CACHE_SIZE = 256
 KNOWN_SHORT_DOMAINS = {"bit.ly", "j.mp"}

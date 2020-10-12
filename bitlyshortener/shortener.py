@@ -26,9 +26,7 @@ class Shortener:
         self._check_args()
         self._tokens = sorted(self._tokens)  # Sorted for subsequent reproducible randomization.
 
-        self._shorten_url = lru_cache(maxsize=self._max_cache_size)(  # type: ignore  # Instance level cache
-            self._shorten_url
-        )
+        self._shorten_url = lru_cache(maxsize=self._max_cache_size)(self._shorten_url)  # type: ignore  # Instance level cache
         self._init_executor()
         if config.TEST_API_ON_INIT:
             self._test()
@@ -38,21 +36,13 @@ class Shortener:
         calls = cache_info.hits + cache_info.misses
         hit_percentage = ((100 * cache_info.hits) / calls) if (calls != 0) else 0
         size_percentage = ((100 * cache_info.currsize) / cache_info.maxsize) if cache_info.maxsize else 100
-        cache_state = (
-            f"Cache state is: hits={cache_info.hits}, currsize={cache_info.currsize}, "
-            f"hit_rate={hit_percentage:.0f}%, size_rate={size_percentage:.0f}%"
-        )
+        cache_state = f"Cache state is: hits={cache_info.hits}, currsize={cache_info.currsize}, " f"hit_rate={hit_percentage:.0f}%, size_rate={size_percentage:.0f}%"
         return cache_state
 
     def _check_args(self) -> None:
         # Check tokens
         tokens = self._tokens
-        if not (
-            tokens
-            and isinstance(tokens, list)
-            and all(isinstance(token, str) for token in tokens)
-            and (len(tokens) == len(set(tokens)))
-        ):
+        if not (tokens and isinstance(tokens, list) and all(isinstance(token, str) for token in tokens) and (len(tokens) == len(set(tokens)))):
             raise exc.ArgsError("Tokens must be a list of one or more unique strings.")  # Tokens must not be logged.
         log.debug("Number of unique tokens is %s.", len(tokens))
 
@@ -84,9 +74,7 @@ class Shortener:
         log.debug("Max number of worker threads is %s.", self._max_workers)
         self._thread_local = threading.local()
         self._init_requests_session()  # For conditional non-parallel execution.
-        self._executor = concurrent.futures.ThreadPoolExecutor(
-            max_workers=self._max_workers, thread_name_prefix="Requester", initializer=self._init_requests_session
-        )
+        self._executor = concurrent.futures.ThreadPoolExecutor(max_workers=self._max_workers, thread_name_prefix="Requester", initializer=self._init_requests_session)
         log.debug("Initialized thread pool executor.")
 
     @staticmethod
@@ -100,9 +88,7 @@ class Shortener:
         log.debug("Requesting long URL for short URL %s.", short_url)
         try:
             start_time = time.monotonic()
-            response = self._thread_local.session_head.head(
-                short_url, allow_redirects=False, timeout=config.REQUEST_TIMEOUT
-            )
+            response = self._thread_local.session_head.head(short_url, allow_redirects=False, timeout=config.REQUEST_TIMEOUT)
             time_used = time.monotonic() - start_time
             response.raise_for_status()
         except (requests.HTTPError, requests.ConnectionError, requests.Timeout) as exception:
@@ -147,10 +133,7 @@ class Shortener:
             endpoint, token = attempts.pop()
             num_attempt = num_max_attempts - len(attempts)
             endpoint_desc = f'endpoint /{endpoint.rpartition("/")[-1]}'
-            response_desc = (
-                f"response from {endpoint_desc} using token starting with "
-                f"{token[:4]} for long URL {long_url} in attempt {num_attempt} of {num_max_attempts}"
-            )
+            response_desc = f"response from {endpoint_desc} using token starting with " f"{token[:4]} for long URL {long_url} in attempt {num_attempt} of {num_max_attempts}"
             try:
                 log.debug("Requesting %s.", response_desc)
                 start_time = time.monotonic()
@@ -194,10 +177,7 @@ class Shortener:
                         msg = f"The response status code is 400 and so the request will not be reattempted. {exc_desc}"
                         raise exc.RequestError(msg) from None
                 if not attempts:
-                    msg = (
-                        f"Exhausted all {num_max_attempts} attempts requesting response from {num_max_attempts} "
-                        f"for long URL {long_url}. {exc_desc}"
-                    )
+                    msg = f"Exhausted all {num_max_attempts} attempts requesting response from {num_max_attempts} " f"for long URL {long_url}. {exc_desc}"
                     raise exc.RequestError(msg) from None
         assert response.status_code in (200, 201)
         short_url = response_json["link"]
@@ -226,9 +206,7 @@ class Shortener:
         orgs = response.json()["organizations"]
         for org in orgs:
             guid = org["guid"]
-            response = session.get(
-                config.API_URL_FORMAT_ORGANIZATION_LIMITS.format(organization_guid=guid), headers=request_headers
-            )
+            response = session.get(config.API_URL_FORMAT_ORGANIZATION_LIMITS.format(organization_guid=guid), headers=request_headers)
             usages = response.json()["plan_limits"]
             for usage in usages:
                 if usage["name"] == "encodes":
