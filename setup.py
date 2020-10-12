@@ -1,7 +1,9 @@
 """Package installation setup."""
 import distutils.text_file
+import os
+import re
 from pathlib import Path
-from typing import List
+from typing import List, Match, cast
 
 from setuptools import find_packages, setup
 
@@ -18,7 +20,9 @@ setup(
     name="bitlyshortener",
     author="Ouroboros Chrysopoeia",
     author_email="impredicative@users.nomail.github.com",
-    version="0.4.2",
+    version=cast(Match, re.fullmatch(r"refs/tags/v(?P<ver>\S+)", os.environ["GITHUB_REF"]))[
+        "ver"
+    ],  # Ex: GITHUB_REF="refs/tags/v1.2.3"; version="1.2.3"
     description="High-volume Bitly V4 URL shortener with memory-cache",
     keywords="bitly url shortener",
     long_description=(_DIR / "README.md").read_text().strip(),
