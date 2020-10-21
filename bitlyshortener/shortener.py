@@ -19,10 +19,9 @@ log = logging.getLogger(__name__)
 class Shortener:
     """Shortener."""
 
-    def __init__(self, *, tokens: List[str], max_cache_size: int = config.DEFAULT_CACHE_SIZE, vanitize: bool = False):
+    def __init__(self, *, tokens: List[str], max_cache_size: int = config.DEFAULT_CACHE_SIZE):
         self._tokens = tokens
         self._max_cache_size = max_cache_size
-        self._vanitize = vanitize
         self._check_args()
         self._tokens = sorted(self._tokens)  # Sorted for subsequent reproducible randomization.
 
@@ -52,11 +51,6 @@ class Shortener:
         if (not isinstance(max_cache_size, int)) or (max_cache_size < 0):
             raise exc.ArgsError(f"Max cache size must be an integer ≥0, but it is {max_cache_size}.")
         log.debug("Max cache size is %s.", max_cache_size)
-
-        # Check vanitize
-        vanity_status = "enabled" if self._vanitize else "disabled"
-        log.debug("Vanity domains are %s.", vanity_status)
-        # Ref: https://support.bitly.com/hc/en-us/articles/230558107-What-is-a-Custom-Domain-
 
     @staticmethod
     def _check_long_urls(long_urls: List[str]) -> None:
@@ -113,8 +107,7 @@ class Shortener:
         long_url = long_url.strip()
         if self._is_known_short_url(long_url):
             # Note: A preexisting Bitly link can use one of many domains, not just j.mp. It can also be
-            # a custom link or not. A custom link cannot be encoded to an integer for caching. Such a link
-            # must be validated and normalized.
+            # a custom link or not. Such a link must be validated and normalized.
             long_url = self._lengthen_url(long_url)
 
         # Provision attempts
@@ -185,7 +178,7 @@ class Shortener:
         # Postprocess short URL
         if short_url.startswith("http://"):  # Example: http://citi.us/2FPqsuZ
             short_url = short_url.replace("http://", "https://", 1)
-        if (not self._vanitize) or (self._vanitize and short_url.startswith("https://bit.ly/")):
+        if short_url.startswith("https://bit.ly/"):
             url_id = short_url.rpartition("/")[-1]
             short_url = f"https://j.mp/{url_id}"
 
