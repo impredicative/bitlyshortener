@@ -67,13 +67,10 @@ URLs = [
 # URLs = ["https://j.mp/websniffer", "http://j.mp/2Bo2LVf", "http://bit.ly/2BombJQ", "https://cnn.it/2Ggb2ih"]
 
 try:
-    shortener = Shortener(tokens=TOKENS, max_cache_size=128)
+    shortener = Shortener(tokens=TOKENS)
     urls = random.sample(URLs, k=min(len(URLs), {"none": 0, "one": 1, "some": 3, "all": len(URLs)}["one"]))
     print(shortener.shorten_urls(urls))
-    # print(shortener.usage())
-    print(shortener.shorten_urls(urls))
-    # print(shortener.usage())
-    # print(shortener.shorten_urls_to_dict(urls[::-1]))
+    print(shortener.shorten_urls(urls))  # Should use cache.
 
 except Exception:
     time.sleep(0.01)  # Delay for longs to flush.
