@@ -214,7 +214,7 @@ class Shortener:
         source = self._shorten_url
         return {source.__qualname__: source.cache_info()}  # type: ignore
 
-    @cachetools.func.ttl_cache(ttl=config.USAGE_CACHE_TIME)  # type: ignore
+    @cachetools.func.ttl_cache(ttl=config.USAGE_CACHE_TIME)
     def usage(self) -> float:
         """Return the fraction of URL shortening quota used across the pool of tokens for the current calendar month.
 
