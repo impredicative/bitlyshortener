@@ -47,37 +47,37 @@ with an *initializer*.
 ## Usage
 To install the package, run:
 
-    pip install bitlyshortener
+    $ pip install bitlyshortener
 
 Usage examples:
 ```python
-import bitlyshortener
+>>> import bitlyshortener
 
 # Setup
-tokens_pool = ['9fbe2864bb8872f5027c103321ff91be90aea687', '0cbe3864bc8872f5027c103321ff91be30aea787']  # Use your own.
-shortener = bitlyshortener.Shortener(tokens=tokens_pool, max_cache_size=256)
+>>> tokens_pool = ['9fbe2864bb8872f5027c103321ff91be90aea687', '0cbe3864bc8872f5027c103321ff91be30aea787']  # Use your own.
+>>> shortener = bitlyshortener.Shortener(tokens=tokens_pool, max_cache_size=256)
 
 # Shorten to list
-long_urls = ['https://www.amazon.com/gp/product/B07LFJMS2S/', 'https://www.cnn.com/election/2020', 'https://paperswithcode.com/sota']
-shortener.shorten_urls(long_urls)
+>>> long_urls = ['https://www.amazon.com/gp/product/B07LFJMS2S/', 'https://www.cnn.com/election/2020', 'https://paperswithcode.com/sota']
+>>> shortener.shorten_urls(long_urls)
 ['https://amzn.to/2HcWFgV', 'https://cnn.it/3ofdpVp', 'https://j.mp/2IHwQ8P']
 
 # Shorten to dict
-long_urls = ['https://news.google.com', 'https://yahoo.com/']
-shortener.shorten_urls_to_dict(long_urls)
+>>> long_urls = ['https://news.google.com', 'https://yahoo.com/']
+>>> shortener.shorten_urls_to_dict(long_urls)
 {'https://news.google.com': 'https://j.mp/31t9qL2', 'https://yahoo.com/': 'https://yhoo.it/3ondJS2'}
 
 # Normalize diverse preexisting Bitly links
-urls = ['http://j.mp/2Bo2LVf', 'http://bit.ly/2BombJQ', 'https://cnn.it/2Ggb2ih', 'https://j.mp/websniffer']
-shortener.shorten_urls(urls)
+>>> urls = ['http://j.mp/2Bo2LVf', 'http://bit.ly/2BombJQ', 'https://cnn.it/2Ggb2ih', 'https://j.mp/websniffer']
+>>> shortener.shorten_urls(urls)
 ['https://j.mp/37qFvH0', 'https://j.mp/3obETLt', 'https://cnn.it/2FMI6jc', 'https://j.mp/37FmjFV']
 
 # Show usage for tokens pool (cached for an hour)
-shortener.usage()
+>>> shortener.usage()
 0.4604  # Means that an average of 46% of the current calendar month's URL shortening quota has been used across all tokens.
 
 # Show cache info
-shortener.cache_info
+>>> shortener.cache_info
 {'Shortener._shorten_url': CacheInfo(hits=4, misses=10, maxsize=128, currsize=10)}
 ```
 
