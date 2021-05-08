@@ -8,9 +8,11 @@ Other Bitly operations are outside the scope of this package.
 [![cicd badge](https://github.com/impredicative/bitlyshortener/workflows/cicd/badge.svg?branch=master)](https://github.com/impredicative/bitlyshortener/actions?query=workflow%3Acicd+branch%3Amaster)
 
 ## Links
-* Code: https://github.com/impredicative/bitlyshortener/
-* Release: https://pypi.org/project/bitlyshortener/
-* Changelog: https://github.com/impredicative/bitlyshortener/releases
+| Caption   | Link                                                     |
+|-----------|----------------------------------------------------------|
+| Code      | https://github.com/impredicative/bitlyshortener/         |
+| Changelog | https://github.com/impredicative/bitlyshortener/releases |
+| Release   | https://pypi.org/project/bitlyshortener/                 |
 
 ## Requirements
 ### Tokens
