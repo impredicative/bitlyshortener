@@ -7,14 +7,14 @@ Other Bitly operations are outside the scope of this package.
 
 [![cicd badge](https://github.com/impredicative/bitlyshortener/workflows/cicd/badge.svg?branch=master)](https://github.com/impredicative/bitlyshortener/actions?query=workflow%3Acicd+branch%3Amaster)
 
-If you find this package useful and want to donate, you may do so via [BTC](https://blockchair.com/bitcoin/address/bc1q05p96m0s9kqe9c67jq87sjsnuv6vmzeuxea872), [LTC](https://blockchair.com/litecoin/address/ltc1q95jq6j78kvyfrvxalwgt9m9xhj9f4r7jfwrqth), [ETH](https://blockchair.com/ethereum/address/0x0d2d5c576af8ed9f3833f4a3b1e4de6cac2285f0), or [DOGE](https://blockchair.com/dogecoin/address/D5atn8Q9f5iBXrWByxW3i3483QFNH4RFnP).
+If you find this package useful and want to donate, you may do so via [BTC](https://blockchair.com/bitcoin/address/bc1q05p96m0s9kqe9c67jq87sjsnuv6vmzeuxea872), [LTC](https://blockchair.com/litecoin/address/ltc1q95jq6j78kvyfrvxalwgt9m9xhj9f4r7jfwrqth), [ETH](https://blockchair.com/ethereum/address/0x0d2d5c576af8ed9f3833f4a3b1e4de6cac2285f0), or [DOGE](https://blockchair.com/dogecoin/address/D5atn8Q9f5iBXrWByxW3i3483QFNH4RFnP), and optionally [mention it](https://github.com/impredicative/bitlyshortener/discussions). 
 
 ## Links
 | Caption   | Link                                                     |
 |-----------|----------------------------------------------------------|
-| Code      | https://github.com/impredicative/bitlyshortener/         |
+| Repo      | https://github.com/impredicative/bitlyshortener/         |
 | Changelog | https://github.com/impredicative/bitlyshortener/releases |
-| Release   | https://pypi.org/project/bitlyshortener/                 |
+| Package   | https://pypi.org/project/bitlyshortener/                 |
 
 ## Requirements
 ### Tokens
