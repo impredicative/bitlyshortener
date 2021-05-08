@@ -68,7 +68,9 @@ class Shortener:
         log.debug("Max number of worker threads is %s.", self._max_workers)
         self._thread_local = threading.local()
         self._init_requests_session()  # For conditional non-parallel execution.
-        self._executor = concurrent.futures.ThreadPoolExecutor(max_workers=self._max_workers, thread_name_prefix="Requester", initializer=self._init_requests_session)
+        self._executor = concurrent.futures.ThreadPoolExecutor(  # pylint: disable=consider-using-with
+            max_workers=self._max_workers, thread_name_prefix="Requester", initializer=self._init_requests_session
+        )
         log.debug("Initialized thread pool executor.")
 
     @staticmethod
