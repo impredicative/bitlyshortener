@@ -12,4 +12,6 @@ pytest-mypy
 pytest-pycodestyle
 pytest-pydocstyle
 pytest-pylint
+types-cachetools
+types-requests
 vulture
