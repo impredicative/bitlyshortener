@@ -13,7 +13,6 @@ Other Bitly operations are outside the scope of this package.
 | Repo      | https://github.com/impredicative/bitlyshortener/         |
 | Changelog | https://github.com/impredicative/bitlyshortener/releases |
 | Package   | https://pypi.org/project/bitlyshortener/                 |
-| Donation  | [BTC](https://blockchair.com/bitcoin/address/bc1q05p96m0s9kqe9c67jq87sjsnuv6vmzeuxea872) / [LTC](https://blockchair.com/litecoin/address/ltc1q95jq6j78kvyfrvxalwgt9m9xhj9f4r7jfwrqth) / [ETH](https://blockchair.com/ethereum/address/0x0d2d5c576af8ed9f3833f4a3b1e4de6cac2285f0) / [DOGE](https://blockchair.com/dogecoin/address/D5atn8Q9f5iBXrWByxW3i3483QFNH4RFnP) |
 
 ## Requirements
 ### Tokens
