@@ -64,11 +64,9 @@ URLs = [
     "https://arxiv.org/abs/1902.00541v1",
 ]
 
-# URLs = ["https://j.mp/websniffer", "http://j.mp/2Bo2LVf", "http://bit.ly/2BombJQ", "https://cnn.it/2Ggb2ih"]
-
 try:
     shortener = Shortener(tokens=TOKENS)
-    urls = random.sample(URLs, k=min(len(URLs), {"none": 0, "one": 1, "some": 3, "all": len(URLs)}["one"]))
+    urls = random.sample(URLs, k=min(len(URLs), {"none": 0, "one": 1, "some": 3, "all": len(URLs)}["some"]))
     print(shortener.shorten_urls(urls))
     print(shortener.shorten_urls(urls))  # Should use cache.
 

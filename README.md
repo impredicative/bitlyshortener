@@ -33,7 +33,7 @@ The following have historically been the rate limits per token:
 * Per hour: 1000 (presumably for status 200 or 201)
 * Per month: 1000 (presumably for status 201 only)
 
-Bitly sends a monthly email if if 50% of the account's usage limit for new short links is exceeded for the calendar month.
+Bitly sends a monthly email if 50% of the account's usage limit for new short links is exceeded for the calendar month.
 If this email is received, it is suggested to immediately obtain and add additional tokens to the pool used by this package.
 As follows, it is preferable to stay under 50% of the usage limit by having a sufficiently big pool of tokens.
 It is possible to monitor the usage via the **`.usage()`** method as shown in the examples.
@@ -41,7 +41,7 @@ It is possible to monitor the usage via the **`.usage()`** method as shown in th
 It is unknown what the per-IP rate limit is, if any.
 
 ### Python
-Python 3.7+ is required.
+Python ≥3.7 is required.
 Any older version of Python will not work due to the use of 
 [`ThreadPoolExecutor`](https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor)
 with an *initializer*.
@@ -62,19 +62,19 @@ Usage examples:
 # Shorten to list
 >>> long_urls = ['https://www.amazon.com/gp/product/B07LFJMS2S/', 'https://www.cnn.com/election/2020', 'https://paperswithcode.com/sota']
 >>> shortener.shorten_urls(long_urls)
-['https://amzn.to/2HcWFgV', 'https://cnn.it/3ofdpVp', 'https://j.mp/2IHwQ8P']
+['https://amzn.to/3Inxf9V', 'https://cnn.it/3FKKZd8', 'https://bit.ly/3tLlp5w']
 
 # Shorten to dict
 >>> long_urls = ['https://news.google.com', 'https://yahoo.com/']
 >>> shortener.shorten_urls_to_dict(long_urls)
-{'https://news.google.com': 'https://j.mp/31t9qL2', 'https://yahoo.com/': 'https://yhoo.it/3ondJS2'}
+{'https://news.google.com': 'https://bit.ly/3IjSObD', 'https://yahoo.com/': 'https://yhoo.it/2BiHgp8'}
 
 # Normalize diverse preexisting Bitly links
->>> urls = ['http://j.mp/2Bo2LVf', 'http://bit.ly/2BombJQ', 'https://cnn.it/2Ggb2ih', 'https://j.mp/websniffer']
+>>> urls = ['http://bit.ly/3Ad49Hw', 'http://j.mp/2Bo2LVf', 'https://cnn.it/3FKKZd8', 'https://j.mp/websniffer']
 >>> shortener.shorten_urls(urls)
-['https://j.mp/37qFvH0', 'https://j.mp/3obETLt', 'https://cnn.it/2FMI6jc', 'https://j.mp/37FmjFV']
+['https://bit.ly/3Ad49Hw', 'https://bit.ly/3KjocZw', 'https://cnn.it/3FKKZd8', 'https://bit.ly/3nINKph']
 
-# Show usage for tokens pool (cached for an hour)
+# Show usage for tokens pool (is cached for an hour)
 >>> shortener.usage()
 0.4604  # Means that an average of 46% of the current calendar month's URL shortening quota has been used across all tokens.
 

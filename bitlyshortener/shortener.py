@@ -108,7 +108,7 @@ class Shortener:
         # Preprocess long URL
         long_url = long_url.strip()
         if self._is_known_short_url(long_url):
-            # Note: A preexisting Bitly link can use one of many domains, not just j.mp. It can also be
+            # Note: A preexisting Bitly link can use one of many domains, not just bit.ly. It can also be
             # a custom link or not. Such a link must be validated and normalized.
             long_url = self._lengthen_url(long_url)
 
@@ -180,9 +180,6 @@ class Shortener:
         # Postprocess short URL
         if short_url.startswith("http://"):  # Example: http://citi.us/2FPqsuZ
             short_url = short_url.replace("http://", "https://", 1)
-        if short_url.startswith("https://bit.ly/"):
-            url_id = short_url.rpartition("/")[-1]
-            short_url = f"https://j.mp/{url_id}"
 
         log.debug("Returning short URL %s for long URL %s.", short_url, long_url)
         return short_url
