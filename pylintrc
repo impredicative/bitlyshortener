@@ -16,6 +16,7 @@ disable=
     no-init,
     too-few-public-methods,
     too-many-instance-attributes,
+    unspecified-encoding,
     fixme
 
 [REPORTS]
