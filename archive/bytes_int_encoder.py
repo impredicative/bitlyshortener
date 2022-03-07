@@ -27,7 +27,7 @@ class BytesIntEncoder:  # Ref: https://stackoverflow.com/a/54500910/
 
     def decode(self, i: int) -> bytes:
         """Return the original bytes representation of the given integer."""
-        maxint = (2 ** self._num_bits_per_char) - 1
+        maxint = (2**self._num_bits_per_char) - 1
         output = bytes(((i >> offset) & maxint) for offset in range(0, i.bit_length(), self._num_bits_per_char))
         return output.translate(self._reverse_translation_table)
 
@@ -56,8 +56,8 @@ class TestBytesIntEncoder(unittest.TestCase):
     def test_randomly_with_large_str(self):
         for s_len in range(256):
             num_samples = {
-                s_len <= 16: 2 ** s_len,
-                16 < s_len <= 32: s_len ** 2,
+                s_len <= 16: 2**s_len,
+                16 < s_len <= 32: s_len**2,
                 s_len > 32: s_len * 2,
                 s_len > 64: s_len,
                 s_len > 128: 2,
