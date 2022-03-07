@@ -236,7 +236,7 @@ class Shortener:
         usages = list(mapper(self._usage, tokens))
         time_used = time.monotonic() - start_time
         usage = sum(u["used"] for u in usages) / sum(u["limit"] for u in usages)
-        rate_per_second = num_tokens / time_used
+        rate_per_second = (num_tokens / time_used) if (time_used != 0) else float("inf")
         log.info(
             "%s retrieved usage of %s for %s tokens%s in %.1fs at a rate of %s/s.",
             strategy_desc,
@@ -267,7 +267,7 @@ class Shortener:
         time_used = time.monotonic() - start_time
         num_short_urls = len(short_urls)
         assert num_long_urls == num_short_urls
-        rate_per_second = num_short_urls / time_used
+        rate_per_second = (num_short_urls / time_used) if (time_used != 0) else float("inf")
         log.info(
             "%s retrieved %s short URLs%s in %.1fs at a rate of %s/s. %s",
             strategy_desc,
