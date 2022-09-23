@@ -1,5 +1,5 @@
 """Package installation setup."""
-import distutils.text_file
+import distutils.text_file  # pylint: disable=deprecated-module
 import os
 import re
 from pathlib import Path
