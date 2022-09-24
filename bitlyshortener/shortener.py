@@ -195,11 +195,14 @@ class Shortener:
         total_used, total_limit = 0, 0
         request_headers = {"Authorization": f"Bearer {token}"}
         response = session.get(config.API_URL_ORGANIZATIONS, headers=request_headers)
-        orgs = response.json()["organizations"]
+        response.raise_for_status()
+        orgs_data = response.json()
+        orgs = orgs_data["organizations"]
         for org in orgs:
             guid = org["guid"]
             response = session.get(config.API_URL_FORMAT_ORGANIZATION_LIMITS.format(organization_guid=guid), headers=request_headers)
-            usages = response.json()["plan_limits"]
+            limits_data = response.json()
+            usages = limits_data["plan_limits"]
             for usage in usages:
                 if usage["name"] == "encodes":
                     total_used += usage["count"]
