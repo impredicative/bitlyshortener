@@ -28,7 +28,9 @@ It can on rare occasions be necessary to have the confirmation email resent.
 * Enter password and click Generate Token.
 
 #### Rate limits
-The following have historically been the rate limits per token:
+On Nov 17, 2022, Bitly sent an email advising that the rate limit per token was lowered to 50 per month, effective Dec 8, 2022.
+
+The following were previously the rate limits per token:
 * Per minute: 100 (presumably for status 200 or 201)
 * Per hour: 1000 (presumably for status 200 or 201)
 * Per month: 1000 (presumably for status 201 only)
