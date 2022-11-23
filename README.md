@@ -3,6 +3,8 @@
 It requires and uses one or more generic access tokens provided by Bitly which it uses semi-randomly.
 As a disclaimer, this is an unofficial package and it has no association with Bitly.
 
+As of 2022, the maintenance of this package has been discontinued because Bitly dramatically lowered their free quota per token to just 50 URLs per month.
+
 Other Bitly operations are outside the scope of this package.
 
 [![cicd badge](https://github.com/impredicative/bitlyshortener/workflows/cicd/badge.svg?branch=master)](https://github.com/impredicative/bitlyshortener/actions?query=workflow%3Acicd+branch%3Amaster)
@@ -28,7 +30,7 @@ It can on rare occasions be necessary to have the confirmation email resent.
 * Enter password and click Generate Token.
 
 #### Rate limits
-On Nov 17, 2022, Bitly sent an email advising that the rate limit per token was lowered to 50 per month, effective Dec 8, 2022.
+In Nov 2022, Bitly sent an email advising that the rate limit per token was lowered to 50 per month, effective Dec 8, 2022.
 
 The following were previously the rate limits per token:
 * Per minute: 100 (presumably for status 200 or 201)
