@@ -84,7 +84,7 @@ Usage examples:
 
 # Show cache info
 >>> shortener.cache_info
-{'Shortener._shorten_url': CacheInfo(hits=4, misses=10, maxsize=128, currsize=10)}
+{'Shortener._shorten_url': CacheInfo(hits=4, misses=10, maxsize=256, currsize=10)}
 ```
 
 To obtain the fastest response, URLs must be shortened together in a batch as in the examples above.
