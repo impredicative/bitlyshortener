@@ -3,7 +3,7 @@
 It requires and uses one or more generic access tokens provided by Bitly which it uses semi-randomly.
 As a disclaimer, this is an unofficial package and it has no association with Bitly.
 
-**As of 2022, the maintenance of this package has been discontinued because Bitly dramatically lowered their free quota per token to just 50 URLs per month. Users can consider switching to [dagdshort](https://github.com/impredicative/dagdshort) as an alternative.**
+**As of 2022, the maintenance of this package has been discontinued because Bitly dramatically lowered their free quota per token to just 50 URLs per month.**
 
 Other Bitly operations are outside the scope of this package.
 
